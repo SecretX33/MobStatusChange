@@ -41,7 +41,7 @@ Issues can be reported via the Github [issue tracker](https://github.com/SecretX
 
 Please take the time to review existing issues before submitting your own to prevent duplicates. Incorrect or poorly formed reports are wasteful and are subject to deletion. Don't forget to specify your version when opening an issue.
 
-### Copyright
+## Copyright
 
 License: GPL 3.0
 
