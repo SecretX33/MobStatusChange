@@ -8,7 +8,7 @@ This is a plugin for minecraft bukkit/spigot/etc servers that allows you to easi
 
 It also features a new mechanic for poison, poison can now kill. You can turn this feature off, on for only players, mobs, or both at any given time by editing your configs.
 
-Finally, it has an option that allows you to tell MSC that you only want to modify player's melee damage, so you can, for example, increase player's attack speed and use a modifier lower than 1 to reduce melee damage a bit to simulate what minecraft pre-1.9 was. Or use a positive modifier to only increase player melee damage.
+Finally, it has an option to only modify player's melee damage, so you can, for example, increase player's attack speed and use a modifier lower than 1 to reduce melee damage a bit to simulate what minecraft pre-1.9 was. Or use a positive modifier to only increase player melee damage.
 
 ## Download
 
