@@ -226,10 +226,8 @@ public class EntityAttributes {
                 }
                 // Luck
                 if(arg2 != null && e.arg2 != null){
-                    Utils.messageConsole("Luck from player before was " + arg2.getValue());
                     arg2.removeModifier(e.arg2);
                     arg2.addModifier(e.arg2);
-                    Utils.messageConsole("Luck from player after is " + arg2.getValue());
                 }
             } else if(entity.getType() == EntityType.ZOMBIE) {
                 AttributeInstance arg1 = entity.getAttribute(Attribute.ZOMBIE_SPAWN_REINFORCEMENTS);

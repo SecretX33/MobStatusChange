@@ -13,6 +13,7 @@ public class Config {
     private static Main plugin;
     private static boolean playerDamageAffectMeleeOnly;
     private static KilledByPoison whoDieOfPoison = null;
+    private static boolean debug = false;
 
     private Config() {}
 
@@ -26,7 +27,7 @@ public class Config {
             general = config.getConfigurationSection("general");
         }
         if (general == null) {
-            Utils.messageConsole("'General' section could not be find in your YML config file, please fix the issue or delete the file.");
+            Utils.messageConsole(String.format(Const.SECTION_NOT_FOUND,"general"));
             return;
         }
 
@@ -49,6 +50,8 @@ public class Config {
 
         field = "atk-damage-of-player-affects-only-melee";
         playerDamageAffectMeleeOnly = general.isSet(field) && general.getBoolean(field);
+
+        if(config.isSet("general.debug")) debug = config.getBoolean("general.debug");
     }
 
     public static void setPlugin(@NotNull Main p) {
@@ -65,10 +68,10 @@ public class Config {
     }
 
     public static boolean getDebug(){
-        if(plugin == null) {
-            throw new NullPointerException("Plugin variable was not set yet.");
-        }
-        FileConfiguration config = plugin.getConfig();
-        return !config.isSet("general.debug") || config.getBoolean("general.debug");
+        return debug;
+    }
+
+    public static void setDebug(boolean debug) {
+        Config.debug = debug;
     }
 }

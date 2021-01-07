@@ -44,10 +44,10 @@ public class Commands implements CommandExecutor {
                 case "debug":
                     if (sender.hasPermission("msc.debug")) {
                         FileConfiguration config = plugin.getConfig();
-                        boolean state = !config.isSet("general.debug") || !config.getBoolean("general.debug");
-                        config.set("general.debug", state);
+                        Config.setDebug(!Config.getDebug());
+                        config.set("general.debug", Config.getDebug());
                         plugin.saveConfig();
-                        sender.sendMessage(String.format(Const.DEBUG_MODE_STATE_CHANGED, (state) ? "ON" : "OFF"));
+                        sender.sendMessage(String.format(Const.DEBUG_MODE_STATE_CHANGED, (Config.getDebug()) ? "ON" : "OFF"));
                     }
                     break;
             }
