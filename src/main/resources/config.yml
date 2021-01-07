@@ -1,0 +1,188 @@
+############################################################
+# +------------------------------------------------------+ #
+# |                   MobStatusChange                    | #
+# +------------------------------------------------------+ #
+############################################################
+
+# Plugin created by SecretX (github.com/SecretX33)
+# Version @version@
+
+############################################################
+# +------------------------------------------------------+ #
+# |                      Help Me                         | #
+# +------------------------------------------------------+ #
+############################################################
+
+# This plugin allows change to status of any entity in the game, that doesn't mean I am responsible for, let's say, someone trying to change the move-speed of lightning, painting, or item_frame, for example. I just extracted the list of all minecraft entities present on 1.16.3 so you can try to find what mobs you want to change easier.
+
+# Normal Mobs:
+# ===========
+# area_effect_cloud, armor_stand, arrow, bat, bee, blaze, boat, cat, cave_spider, chicken, cod, cow, creeper, dolphin, donkey, dragon_fireball, dropped_item, drowned, egg, elder_guardian, ender_crystal, ender_dragon, ender_pearl, ender_signal, enderman, endermite, evoker, evoker_fangs, experience_orb, falling_block, fireball, firework, fishing_hook, fox, ghast, giant, guardian, hoglin, horse, husk, illusioner, iron_golem, item_frame, leash_hitch, lightning, llama, llama_spit, magma_cube, minecart, minecart_chest, minecart_command, minecart_furnace, minecart_hopper, minecart_mob_spawner, minecart_tnt, mule, mushroom_cow, ocelot, painting, panda, parrot, phantom, pig, piglin,
+# piglin_brute, pillager, player, polar_bear, primed_tnt, pufferfish, rabbit, ravager, salmon, sheep, shulker, shulker_bullet, silverfish, skeleton, skeleton_horse, slime, small_fireball, snowball, snowman, spectral_arrow, spider, splash_potion, squid, stray, strider, thrown_exp_bottle, trader_llama, trident, tropical_fish, turtle, vex, villager, vindicator, wandering_trader, witch, wither, wither_skeleton, wither_skull, wolf, zoglin, zombie, zombie_horse, zombie_villager, zombified_piglin.
+
+# Baby Mobs:
+# ==========
+# baby_bee, baby_cat, baby_chicken, baby_cow, baby_donkey, baby_drowned, baby_fox, baby_hoglin, baby_horse, baby_husk, baby_llama, baby_mule, baby_mushroom_cow, baby_ocelot, baby_panda, baby_parrot, baby_pig, baby_piglin, baby_piglin_brute, baby_polar_bear, baby_rabbit, baby_sheep, baby_skeleton_horse, baby_strider, baby_trader_llama, baby_turtle, baby_villager, baby_wandering_trader, baby_wolf, baby_zoglin, baby_zombie, baby_zombie_horse, baby_zombie_villager, baby_zombified_piglin.
+
+# If the mob you want is not yet in the list, just copy its name from the lists above and create an entry below using the SAME format as the examples below
+
+### General Attributes
+#
+## hp: [multiplicative]
+## Description: The maximum health of this mob (in half-hearts); you can reduce a entity health by half if you use 0.5 value, or double it by using 2.0; if the multiplication would result in a value over 1024, the game will set mob's health to 1024 instead (game limit)
+#
+## follow-range: [multiplicative]
+## Description: The range in blocks within which a mob with this attribute targets players or other mobs to track (in blocks); you can reduce the entity follow range (track range) by half if you use 0.5 value, or double it by using 2.0; if the multiplication would result in a value over 2048, the game will set mob's follow range to 2048 instead (game limit)
+#
+# atk-damage: [multiplicative]
+## Description: The damage caused by a mob; this mod multiply ALL damage dealt by a mob, including attacks, arrows, potions, poison, ALL of them; you can reduce the entity damage by half if you use 0.5 value, or double it by using 2.0; if the multiplication would result in a value over 2048, the game will set mob's damage to 2048 instead (game limit)
+#
+# atk-knockback: [additive]
+## Description: Knockback applied to attacks; applies only to mobs with physical damage; you can subtract mob knockback by using values lower than zero; values over 5 will result in 5 blocks knockback (game limit)
+#
+# knockback-resist: [additive]
+## Description: The scale of the amount of knockback resisted from attacks and projectiles, does not affect explosions; 0.0 value means 0% resistance, 0.5 means 50% resistance and 1.0 means 100% resistance added (meaning fully invincible against knockbacks), and you can of course subtract resistance from a mob if you know he has it by using a negative value
+#
+# move-speed: [multiplicative]
+## Description: The speed a mob moves; be aware that almost all mobs use this attribute to set their speed, even those who can fly; you can reduce the entity speed by half if you use 0.5 value, or double it by using 2.0; if the multiplication would result in a value over 1024, the game will set mob's speed to 1024 instead (game limit)
+#
+
+### Specific Attributes
+#
+# Creepers only
+# max-fuse-time: [substitutive]
+## Description: Time for Creeper to explode, in ticks; default is 30.
+#
+# explosion-radius: [substitutive]
+## Description: Radius of Creeper explosion, in blocks; default is 3.
+#
+# Bees and Parrots only
+# flying_speed: [multiplicative]
+## Description: The speed a mob flies; you can reduce the entity fly speed by half if you use 0.5 value, or double it by using 2.0; if the multiplication would result in a value over 1024, the game will set mob's fly speed to 1024 instead (game limit)
+#
+# Zombies only
+# spawn-reinforcements: [additive]
+## Description: Chance for a zombie to spawn another zombie when attacked, each time a zombie suffers an attack, it will have this chance to summon another zombie; 0.0 value means 0% chance, 0.5 means 50% chance and 1.0 means 100% chance; normal zombies have about 5% chance set, I've set it to 100% change to see if it would change anything but apparently it doesn't make any difference in-game.
+#
+# Players only
+# attack_speed: [multiplicative]
+## Description: Determines recharging rate of attack strength; you can reduce the recharging speed of player attacks by half if you use 0.5 value, or double it by using 2.0; if the multiplication would result in a value over 1024, the game will set atk-speed to 1024 instead (game limit)
+#
+# luck: [additive]
+## Description: Affects the results of loot tables (e.g. when opening chests or chest minecarts, fishing, and killing mobs); you can decrease players luck by using a negative value, or increase using positive values; if the sum/subtraction would result in a value out of the range -1024 ~ 1024, the game will set luck to the value on the edge of the range instead (game limit)
+
+############################################################
+# +------------------------------------------------------+ #
+# |                   General Settings                   | #
+# +------------------------------------------------------+ #
+############################################################
+
+general:
+  # If set to any value other than none, it will check for poison in those entities and kill them if they would die from poison; valid values: all, players, monsters, none
+  entities-killed-by-poison: all
+  # Useful in situations like, for example, if you want to remove the attack delay (by multiplying the attack speed of players by like, 100), and decrease melee damage to compensate (because players will always have the sweep attack), but don't want to alter ranged or potion damage of players.
+  atk-damage-of-player-affects-only-melee: false
+
+############################################################
+# +------------------------------------------------------+ #
+# |                 Mob Status Modifiers                 | #
+# +------------------------------------------------------+ #
+############################################################
+
+entities:
+  # Affect ALL players
+  player:
+    hp: 1.0                # multiplicative
+    atk-damage: 1.0        # multiplicative
+    atk-speed: 1.0         # multiplicative
+    atk-knockback: 0.0     # additive
+    knockback-resist: 0.0  # additive
+    move-speed: 1.0        # multiplicative
+    luck: 0.0              # additive
+
+  creeper:
+    hp: 1.0
+    follow-range: 1.0
+    # Increase creeper explosion damage as well
+    atk-damage: 1.0
+    knockback-resist: 0.0
+    move-speed: 1.0
+    # Time for creeper to explode, in ticks
+    max-fuse-time: 30      # default is 30
+    # Radius of creeper explosion, in blocks
+    explosion-radius: 3    # default is 3
+
+  # Baby zombies doesn't have spawn-reinforcements property
+  baby_zombie:
+    hp: 1.0
+    follow-range: 1.0
+    atk-damage: 1.0
+    atk-knockback: 0.0
+    knockback-resist: 0.0
+    move-speed: 1.0
+
+  # Normal zombies does
+  zombie:
+    hp: 1.0
+    follow-range: 1.0
+    atk-damage: 1.0
+    atk-knockback: 0.0
+    knockback-resist: 0.0
+    move-speed: 1.0
+    spawn-reinforcements: 0.0  # Additive, 0.0 ~ 1.0
+
+  skeleton:
+    hp: 1.0
+    follow-range: 1.0
+    atk-damage: 1.0
+    knockback-resist: 0.0
+    move-speed: 1.0
+
+  witch:
+    hp: 1.0
+    follow-range: 1.0
+    # Increase witch poison damage (by increasing its level) and instant damage potion damage
+    atk-damage: 1.0
+    knockback-resist: 0.0
+    move-speed: 1.0
+
+  ghast:
+    hp: 1.0
+    follow-range: 1.0
+    atk-damage: 1.0
+    knockback-resist: 0.0
+    move-speed: 1.0
+
+  ender_dragon:
+    hp: 1.0
+    follow-range: 1.0
+    atk-damage: 1.0
+    knockback-resist: 0.0
+    move-speed: 1.0
+
+  # ender dragon aoe skill (that purple cloud)
+  area_effect_cloud:
+    atk-damage: 1.0
+
+  bee:
+    hp: 1.0
+    follow-range: 1.0
+    atk-damage: 1.0
+    knockback-resist: 0.0
+    # For the bees, for some reason the move-speed attribute is what change their flying speed; if the value set on flying speed is anything different from 1, it seems to slow the bee down or prevent the move-speed to apply its values correctly
+    move-speed: 1.0
+
+  silverfish:
+    hp: 1.0
+    follow-range: 1.0
+    atk-damage: 1.0
+    atk-knockback: 0.0
+    knockback-resist: 0.0
+    move-speed: 1.0
+
+  ocelot:
+    hp: 1.0
+    follow-range: 1.0
+    atk-damage: 1.0
+    knockback-resist: 0.0
+    move-speed: 1.0
