@@ -10,13 +10,13 @@ It also features a new mechanic for poison, poison can now kill. You can turn th
 
 Finally, it has an option that allows you to tell MSC that you only want to modify player's melee damage, so you can, for example, increase player's attack speed and use a modifier lower than 1 to reduce melee damage a bit to simulate what minecraft pre-1.9 was. Or use a positive modifier to only increase player melee damage.
 
-### Download
+## Download
 
 You can download the latest version by [clicking here](https://github.com/SecretX33/MobStatusChange/releases/latest/download/MobStatusChange.jar). 
 
 Or if you want to download an earlier version of the plugin, you can do it by checking the release page [here](https://github.com/SecretX33/MobStatusChange/releases).
 
-### FAQ
+## FAQ
 
 **Q:** What status does this plugin allows me to edit?
 
@@ -41,7 +41,7 @@ Issues can be reported via the Github [issue tracker](https://github.com/SecretX
 
 Please take the time to review existing issues before submitting your own to prevent duplicates. Incorrect or poorly formed reports are wasteful and are subject to deletion. Don't forget to specify your version when opening an issue.
 
-###Copyright
+### Copyright
 
 License: GPL 3.0
 
