@@ -89,15 +89,15 @@ general:
   creeper-explosion-insta-break-shields: false
   # How many percent of creeper explosion damage should bypass shield protection; 0.0 means 0% (like in vanilla, shield block fully protect players), 0.5 means 50% and 1.0 means 100% (players take full damage of the creeper explosion no matter if he is blocking or not)
   creeper-explosion-shield-damage-bypass: 0.0
-  # Optionally, send the player a message after taking damage from a creeper and blocking it with a shield, leave it empty if you don't want that
+  # Optionally, send the player a message after taking damage from a creeper and blocking it with a shield
   message-player-after-shieldblocking-creeper-explosion:
-    # color sign is &
+    # Leave it empty if you don't want to send any message; color sign is &
     text: ""
-    channel: chat # valid parametrs: chat, title
-    # parameters valid for title only
-    fade-in: 1    # in seconds
-    stay-time: 3  # in seconds
-    fade-out: 1   # in seconds
+    channel: chat  # valid parameters: chat, title
+    # below parameters are valid only if channel is set to title
+    fade-in: 1     # in seconds
+    stay-time: 3   # in seconds
+    fade-out: 1    # in seconds
 
 ############################################################
 # +------------------------------------------------------+ #
@@ -128,16 +128,7 @@ entities:
     # Radius of creeper explosion, in blocks
     explosion-radius: 3    # default is 3
 
-  # Baby zombies doesn't have spawn-reinforcements property
-  baby_zombie:
-    hp: 1.0
-    follow-range: 1.0
-    atk-damage: 1.0
-    atk-knockback: 0.0
-    knockback-resist: 0.0
-    move-speed: 1.0
-
-  # Normal zombies does
+  # Normal zombies have spawn-reinforcements property
   zombie:
     hp: 1.0
     follow-range: 1.0
@@ -146,6 +137,15 @@ entities:
     knockback-resist: 0.0
     move-speed: 1.0
     spawn-reinforcements: 0.0  # Additive, 0.0 ~ 1.0
+
+  # Baby zombies doesn't
+  baby_zombie:
+    hp: 1.0
+    follow-range: 1.0
+    atk-damage: 1.0
+    atk-knockback: 0.0
+    knockback-resist: 0.0
+    move-speed: 1.0
 
   skeleton:
     hp: 1.0

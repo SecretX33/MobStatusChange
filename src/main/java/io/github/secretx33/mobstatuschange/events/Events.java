@@ -317,7 +317,6 @@ public class Events implements Listener {
 
             if(attacker instanceof Creeper && defender instanceof Player){
                 final Player p = (Player)defender;
-                Utils.debugMessage(String.format("Player %s took damage of creeper.", p.getName()));
                 boolean isBlocking = p.isBlocking();
                 if(isBlocking){
                     // Creeper explosion insta break shield
@@ -342,8 +341,17 @@ public class Events implements Listener {
                     }
                     //Send player a message after shieldblocking creeper explosion
                     if(Config.shouldMsgPlayerAfterShieldblockingCreeperExplosion()){
-                        p.sendTitle("",Config.getMessagePlayerAfterShieldblockingCreeperExplosion(),1 * plugin.getTps(),4 * plugin.getTps(),1 * plugin.getTps());
-//                        p.sendMessage();
+                        String msg = Config.getMessagePlayerAfterShieldblockingCreeperExplosion();
+
+                        if(Config.getChannel() == Const.ValidChannels.CHAT){
+                            p.sendMessage(msg);
+                        } else if(Config.getChannel() == Const.ValidChannels.TITLE){
+                            final int tps      = plugin.getTps();
+                            final int fadeIn   = Config.getFadeIn() * tps;
+                            final int stayTime = Config.getStayTime() * tps;
+                            final int fadeOut  = Config.getFadeOut() * tps;
+                            p.sendTitle("", msg, fadeIn, stayTime, fadeOut);
+                        }
                     }
                 }
             }

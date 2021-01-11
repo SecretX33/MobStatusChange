@@ -39,8 +39,6 @@ public class Main extends JavaPlugin {
         EntityAttributes.setPlugin(this);
         Commands cmds = new Commands(this);
         Events e = new Events(this);
-        getLogger().setLevel(Level.FINE);
-
 
         // Measuring TPS
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {

@@ -34,7 +34,7 @@ public class Config {
     private static boolean creeperExplosionInstaBreakShields;
     private static double creeperExplosionShieldBypassPercent;
     private static String messagePlayerAfterShieldblockingCreeperExplosion = null;
-    private static ValidChannels channel = null;
+    private static ValidChannels channel = ValidChannels.CHAT;
     private static int fadeIn = 0;
     private static int stayTime = 0;
     private static int fadeOut = 0;
@@ -184,6 +184,22 @@ public class Config {
 
     public static String getMessagePlayerAfterShieldblockingCreeperExplosion() {
         return messagePlayerAfterShieldblockingCreeperExplosion;
+    }
+
+    public static ValidChannels getChannel() {
+        return channel;
+    }
+
+    public static int getFadeIn() {
+        return fadeIn;
+    }
+
+    public static int getStayTime() {
+        return stayTime;
+    }
+
+    public static int getFadeOut() {
+        return fadeOut;
     }
 
     public static boolean getDebug(){
