@@ -18,7 +18,7 @@ permissions:
     children:
       msc.reload: true
       msc.debug: true
-  msc.msc:
+  msc.reload:
     description: Allows you to reload the plugin config
     default: op
   msc.debug:
