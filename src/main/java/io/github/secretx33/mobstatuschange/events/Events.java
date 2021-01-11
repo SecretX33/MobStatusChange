@@ -1,12 +1,31 @@
+/*
+This file is part of MobStatusChange.
+
+MobStatusChange is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+MobStatusChange is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package io.github.secretx33.mobstatuschange.events;
 
+import io.github.secretx33.mobstatuschange.Main;
 import io.github.secretx33.mobstatuschange.config.Config;
 import io.github.secretx33.mobstatuschange.config.Const;
 import io.github.secretx33.mobstatuschange.config.Const.KilledByPoison;
 import io.github.secretx33.mobstatuschange.entity.EntityAttributes;
-import io.github.secretx33.mobstatuschange.Main;
 import io.github.secretx33.mobstatuschange.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -30,6 +49,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 @ParametersAreNonnullByDefault
 public class Events implements Listener {
@@ -37,10 +57,12 @@ public class Events implements Listener {
     private final Main plugin;
     private FileConfiguration config;
     private final ArrayList<UUID> scheduledPoisonChecks;
+    private final Logger LOG;
 
 
     public Events(Main plugin) {
         this.plugin = plugin;
+        LOG = plugin.getLogger();
         Bukkit.getPluginManager().registerEvents(this, plugin);
         scheduledPoisonChecks = new ArrayList<>();
     }
@@ -60,7 +82,7 @@ public class Events implements Listener {
             AttributeInstance spawnReinforcements = e.getAttribute(Attribute.ZOMBIE_SPAWN_REINFORCEMENTS);
 
             plugin.getServer().getConsoleSender().sendMessage("");
-            Utils.messageConsole(String.format("Base status of %s%s\nhp = %s (%s)\nfr = %s\ndmg = %s\natkspeed = %s\natkKnockBack = %s\nknockBackResist = %s\nmovSpeed = %s\nflyingSpeed = %s\nspawnReinforcements = %s",
+            Utils.consoleMessage(String.format("Base status of %s%s\nhp = %s (%s)\nfr = %s\ndmg = %s\natkspeed = %s\natkKnockBack = %s\nknockBackResist = %s\nmovSpeed = %s\nflyingSpeed = %s\nspawnReinforcements = %s",
                 e.getName(),
                 (Ageable.class.isAssignableFrom(e.getClass()) && !((Ageable)e).isAdult()) ? " (baby)" : "",
                 e.getHealth(),
@@ -90,7 +112,7 @@ public class Events implements Listener {
             AttributeInstance spawnReinforcements = e.getAttribute(Attribute.ZOMBIE_SPAWN_REINFORCEMENTS);
 
             plugin.getServer().getConsoleSender().sendMessage("");
-            Utils.messageConsole(String.format("Altered status of %s%s\nhp = %s (%s)\nfr = %s\ndmg = %s\natkspeed = %s\natkKnockBack = %s\nknockBackResist = %s\nmovSpeed = %s\nflyingSpeed = %s\nspawnReinforcements = %s",
+            Utils.consoleMessage(String.format("Altered status of %s%s\nhp = %s (%s)\nfr = %s\ndmg = %s\natkspeed = %s\natkKnockBack = %s\nknockBackResist = %s\nmovSpeed = %s\nflyingSpeed = %s\nspawnReinforcements = %s",
                     e.getName(),
                     (Ageable.class.isAssignableFrom(e.getClass()) && !((Ageable)e).isAdult()) ? " (baby)" : "",
                     e.getHealth(),
@@ -103,7 +125,7 @@ public class Events implements Listener {
                     movSpeed!=null?movSpeed.getValue():"unknown",
                     flyingSpeed!=null?flyingSpeed.getValue():"unknown",
                     spawnReinforcements!=null?spawnReinforcements.getValue():"unknown"));
-            Utils.messageConsole("-----------------------\n");
+            Utils.consoleMessage("-----------------------\n");
         }
     }
 
@@ -247,9 +269,9 @@ public class Events implements Listener {
             }
         }
         if(dmgMod != null){
-            if(Config.getDebug() && defender instanceof Player && dmgMod != 1) Utils.messageConsole(String.format("Fire duration from %s on %s before change was %s.", attacker.getName(), defender.getName(), event.getDuration()));
+            if(Config.getDebug() && defender instanceof Player && dmgMod != 1) Utils.consoleMessage(String.format("Fire duration from %s on %s before change was %s.", attacker.getName(), defender.getName(), event.getDuration()));
             event.setDuration((int)Math.round(event.getDuration() * dmgMod));
-            if(Config.getDebug() && defender instanceof Player && dmgMod != 1) Utils.messageConsole(String.format("Fire duration from %s on %s after change is %s.", attacker.getName(), defender.getName(), event.getDuration()));
+            if(Config.getDebug() && defender instanceof Player && dmgMod != 1) Utils.consoleMessage(String.format("Fire duration from %s on %s after change is %s.", attacker.getName(), defender.getName(), event.getDuration()));
         }
     }
 
@@ -271,7 +293,7 @@ public class Events implements Listener {
         }
 
         if(Config.getDebug() && defender instanceof Player){
-            Utils.messageConsole("Player " + defender.getName() + " took damage of " + attacker.getName());
+            Utils.consoleMessage("Player " + defender.getName() + " took damage of " + attacker.getName());
         }
 
         if(attacker instanceof Projectile){
@@ -290,42 +312,75 @@ public class Events implements Listener {
             }
         }
         if(dmgMod != null){
-            if(Config.getDebug() && (attacker instanceof Player || defender instanceof Player) && dmgMod != 1) Utils.messageConsole(String.format("Damage from %s on %s before change was %s.", attacker.getName(), defender.getName(), event.getDamage()));
+            if(Config.getDebug() && (attacker instanceof Player || defender instanceof Player) && dmgMod != 1) Utils.consoleMessage(String.format("Damage from %s on %s before change was %s.", attacker.getName(), defender.getName(), event.getDamage()));
             event.setDamage(event.getDamage() * dmgMod);
-            if(Config.getDebug() && (attacker instanceof Player || defender instanceof Player) && dmgMod != 1) Utils.messageConsole(String.format("Damage from %s on %s after change is %s.", attacker.getName(), defender.getName(), event.getDamage()));
+
+            if(attacker instanceof Creeper && defender instanceof Player){
+                final Player p = (Player)defender;
+                Utils.debugMessage(String.format("Player %s took damage of creeper.", p.getName()));
+                boolean isBlocking = p.isBlocking();
+                if(isBlocking){
+                    // Creeper explosion insta break shield
+                    if(Config.doesCreeperExplosionInstaBreakShields()){
+                        Utils.debugMessage(String.format("Player %s was blocking, breaking his shield.", p.getName()));
+                        ItemStack mainHand = p.getInventory().getItemInMainHand();
+                        ItemStack offHand = p.getInventory().getItemInOffHand();
+
+                        if(mainHand.getType() == Material.matchMaterial("shield")){
+                            p.getInventory().setItemInMainHand(null);
+                        } else if(offHand.getType() == Material.matchMaterial("shield")){
+                            p.getInventory().setItemInOffHand(null);
+                        }
+                        p.updateInventory();
+                        p.playSound(p.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);
+                    }
+                    // Creeper explosion shield damage bypass
+                    final double damageBypass = Config.getCreeperExplosionShieldBypassPercent();
+                    if(damageBypass > 0){
+                        p.damage(event.getDamage() * damageBypass);
+                        Utils.debugMessage(p.getName() + " took " + damageBypass*100 + "% of creeper explosion (creeper explosion damage bypass).");
+                    }
+                    //Send player a message after shieldblocking creeper explosion
+                    if(Config.shouldMsgPlayerAfterShieldblockingCreeperExplosion()){
+                        p.sendTitle("",Config.getMessagePlayerAfterShieldblockingCreeperExplosion(),1 * plugin.getTps(),4 * plugin.getTps(),1 * plugin.getTps());
+//                        p.sendMessage();
+                    }
+                }
+            }
+            if(Config.getDebug() && (attacker instanceof Player || defender instanceof Player) && dmgMod != 1) Utils.consoleMessage(String.format("Damage from %s on %s after change is %s.", attacker.getName(), defender.getName(), event.getDamage()));
         }
     }
 
-// Future Reflections
-/*try {
-    Skeleton creeper = (Skeleton)event.getEntity();
-    Class classs = creeper.getClass();
-    Field[] fields = classs.getDeclaredFields();
-    Utils.sendMessageToConsole(classs.getName() + " DECLARED FIELDS");
-    Utils.sendMessageToConsole("----------------------");
-    for (int i = 0; i < fields.length; i++) {
-        Utils.sendMessageToConsole(fields[i].getType().getName() + " " + fields[i].getName());
-    }
-    Method[] methods = classs.getDeclaredMethods();
-    Utils.sendMessageToConsole(classs.getName() + " DECLARED METHODS");
-    Utils.sendMessageToConsole("----------------------");
-    for (int i = 0; i < methods.length; i++) {
-        Parameter[] paras = methods[i].getParameters();
-        String prs = "";
-        for (int j = 0; j < paras.length; j++) {
-            if (j == 0) prs = "(";
-            prs += paras[j].getName() + ((j + 1 < paras.length) ? ", " : ")");
+    // Future Reflections
+    /*try {
+        Skeleton creeper = (Skeleton)event.getEntity();
+        Class classs = creeper.getClass();
+        Field[] fields = classs.getDeclaredFields();
+        Utils.sendMessageToConsole(classs.getName() + " DECLARED FIELDS");
+        Utils.sendMessageToConsole("----------------------");
+        for (int i = 0; i < fields.length; i++) {
+            Utils.sendMessageToConsole(fields[i].getType().getName() + " " + fields[i].getName());
         }
-        Utils.sendMessageToConsole(methods[i].getName() + prs);
-    }
+        Method[] methods = classs.getDeclaredMethods();
+        Utils.sendMessageToConsole(classs.getName() + " DECLARED METHODS");
+        Utils.sendMessageToConsole("----------------------");
+        for (int i = 0; i < methods.length; i++) {
+            Parameter[] paras = methods[i].getParameters();
+            String prs = "";
+            for (int j = 0; j < paras.length; j++) {
+                if (j == 0) prs = "(";
+                prs += paras[j].getName() + ((j + 1 < paras.length) ? ", " : ")");
+            }
+            Utils.sendMessageToConsole(methods[i].getName() + prs);
+        }
 
-    Method setIsDead = playerClass.getDeclaredMethod("setIsDead", (Class<?>[])null);
-    Class[] methodParams = new Class[]{boolean.class};
-    setIsDead.setAccessible(true);
-    Object[] params = new Object[]{true};
-    setIsDead.invoke(p, params);
-    Utils.sendMessageToConsole("succeded changed player isDead to true");
-    } catch (Exception e) {
-        e.printStackTrace();
-}*/
+        Method setIsDead = playerClass.getDeclaredMethod("setIsDead", (Class<?>[])null);
+        Class[] methodParams = new Class[]{boolean.class};
+        setIsDead.setAccessible(true);
+        Object[] params = new Object[]{true};
+        setIsDead.invoke(p, params);
+        Utils.sendMessageToConsole("succeded changed player isDead to true");
+        } catch (Exception e) {
+            e.printStackTrace();
+    }*/
 }

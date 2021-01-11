@@ -2,6 +2,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 group = 'io.github.secretx33'
@@ -29,12 +30,26 @@ dependencies {
     compileOnly 'com.google.guava:guava:30.1-jre'
 }
 
-jar {
-    //project.archiveFileName 'my_custom_filename_here'
-    version '' // Comment this line to have your version in your jar file
-//    from {
-//        configurations.compileClasspath.filter{ it.exists() && it.name.contains("spigot") }.collect { it.isDirectory() ? it : zipTree(it) }
-//    }
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+// Disables the normal jar task
+jar.enabled = false
+
+// And enables shadowJar task
+artifacts { archives shadowJar }
+
+shadowJar {
+    archiveFileName = rootProject.name + '.jar'
+    from('LICENSE').rename('(LICENSE)', '$1.txt')
+
+    /*dependencies {
+        include(dependency('io.github.secretx.lib:.*'))
+        include(dependency('com.google.guava:guava:.*'))
+    }
+    relocate 'com.google.thirdparty', 'io.github.secretx.lib.thirdparty'
+    relocate 'com.google.common', 'io.github.secretx.lib.guava'*/
 }
 
 processResources {
