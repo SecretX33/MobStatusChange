@@ -14,12 +14,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
+package io.github.secretx33.mobstatuschange.Entity;
 
-package io.github.secretx33.mobstatuschange.entity;
-
-import io.github.secretx33.mobstatuschange.config.Const;
+import io.github.secretx33.mobstatuschange.Config.Const;
 import io.github.secretx33.mobstatuschange.Main;
-import io.github.secretx33.mobstatuschange.utils.Utils;
+import io.github.secretx33.mobstatuschange.Utils.Utils;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
@@ -30,7 +29,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNullableByDefault;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 
 public class EntityAttributes {
     private static Main plugin = null;

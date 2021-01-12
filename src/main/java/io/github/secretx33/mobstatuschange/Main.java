@@ -14,17 +14,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 package io.github.secretx33.mobstatuschange;
 
-import io.github.secretx33.mobstatuschange.events.Events;
-import io.github.secretx33.mobstatuschange.commands.Commands;
-import io.github.secretx33.mobstatuschange.config.Config;
-import io.github.secretx33.mobstatuschange.entity.EntityAttributes;
-import io.github.secretx33.mobstatuschange.utils.Utils;
+import io.github.secretx33.mobstatuschange.Events.ApplyCustomAttribEvents;
+import io.github.secretx33.mobstatuschange.Events.CreeperExplosionEvents;
+import io.github.secretx33.mobstatuschange.Events.DamageModifierEvents;
+import io.github.secretx33.mobstatuschange.Commands.Commands;
+import io.github.secretx33.mobstatuschange.Config.Config;
+import io.github.secretx33.mobstatuschange.Entity.EntityAttributes;
+import io.github.secretx33.mobstatuschange.Events.LetalPoisonEvents;
+import io.github.secretx33.mobstatuschange.Utils.Utils;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.logging.Level;
 
 public class Main extends JavaPlugin {
 
@@ -38,7 +38,10 @@ public class Main extends JavaPlugin {
         Config.reloadConfig();
         EntityAttributes.setPlugin(this);
         Commands cmds = new Commands(this);
-        Events e = new Events(this);
+        ApplyCustomAttribEvents applyCustomAttribEvents = new ApplyCustomAttribEvents(this);
+        DamageModifierEvents damageModifierEvents = new DamageModifierEvents(this);
+        CreeperExplosionEvents creeperExplosionEvents = new CreeperExplosionEvents(this);
+        LetalPoisonEvents letalPoisonEvents = new LetalPoisonEvents(this);
 
         // Measuring TPS
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {

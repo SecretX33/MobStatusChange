@@ -14,12 +14,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
+package io.github.secretx33.mobstatuschange.Commands;
 
-package io.github.secretx33.mobstatuschange.commands;
-
-import io.github.secretx33.mobstatuschange.config.Config;
-import io.github.secretx33.mobstatuschange.config.Const;
-import io.github.secretx33.mobstatuschange.entity.EntityAttributes;
+import io.github.secretx33.mobstatuschange.Config.Config;
+import io.github.secretx33.mobstatuschange.Config.Const;
+import io.github.secretx33.mobstatuschange.Entity.EntityAttributes;
 import io.github.secretx33.mobstatuschange.Main;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

@@ -14,13 +14,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-package io.github.secretx33.mobstatuschange.config;
+package io.github.secretx33.mobstatuschange.Config;
 
 import io.github.secretx33.mobstatuschange.Main;
-import io.github.secretx33.mobstatuschange.config.Const.KilledByPoison;
-import io.github.secretx33.mobstatuschange.config.Const.ValidChannels;
-import io.github.secretx33.mobstatuschange.utils.Utils;
+import io.github.secretx33.mobstatuschange.Config.Const.KilledByPoison;
+import io.github.secretx33.mobstatuschange.Config.Const.ValidChannels;
+import io.github.secretx33.mobstatuschange.Utils.Utils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
