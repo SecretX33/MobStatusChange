@@ -58,8 +58,7 @@ public class EntityAttributes {
     private AttributeModifier arg2; // Second exclusive attribute of entity
     private Double arg3;            // First exclusive attribute of entity
     private Double arg4;            // Second exclusive attribute of entity
-
-
+    
     @ParametersAreNullableByDefault
     public EntityAttributes(@NotNull EntityType entityType, boolean isBaby, Double hpMod, Double followRangeMod, Double atkDamageMod, Double atkKnockBackMod, Double knockBackResistMod, Double movSpeedMod, Double arg1, AttributeModifier.Operation opArg1, Double arg2, AttributeModifier.Operation opArg2, Double arg3, Double arg4) {
         // Initializing variables with null
