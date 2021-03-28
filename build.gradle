@@ -44,11 +44,7 @@ shadowJar {
     archiveFileName = rootProject.name + '.jar'
     from('LICENSE').rename('(LICENSE)', '$1.txt')
 
-    /*dependencies {
-        include(dependency('io.github.secretx.lib:.*'))
-        include(dependency('com.google.guava:guava:.*'))
-    }
-    relocate 'com.google.thirdparty', 'io.github.secretx.lib.thirdparty'
+    /*relocate 'com.google.thirdparty', 'io.github.secretx.lib.thirdparty'
     relocate 'com.google.common', 'io.github.secretx.lib.guava'*/
 }
 
