@@ -14,11 +14,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
-package io.github.secretx33.mobstatuschange.Utils;
+package io.github.secretx33.mobstatuschange.utils;
 
 import com.google.common.base.Preconditions;
 import io.github.secretx33.mobstatuschange.Main;
-import io.github.secretx33.mobstatuschange.Config.Config;
+import io.github.secretx33.mobstatuschange.config.Config;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 

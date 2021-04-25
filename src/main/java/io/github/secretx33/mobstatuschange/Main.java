@@ -16,14 +16,14 @@ along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
 package io.github.secretx33.mobstatuschange;
 
-import io.github.secretx33.mobstatuschange.Events.ApplyCustomAttribEvents;
-import io.github.secretx33.mobstatuschange.Events.CreeperExplosionEvents;
-import io.github.secretx33.mobstatuschange.Events.DamageModifierEvents;
-import io.github.secretx33.mobstatuschange.Commands.Commands;
-import io.github.secretx33.mobstatuschange.Config.Config;
-import io.github.secretx33.mobstatuschange.Entity.EntityAttributes;
-import io.github.secretx33.mobstatuschange.Events.LetalPoisonEvents;
-import io.github.secretx33.mobstatuschange.Utils.Utils;
+import io.github.secretx33.mobstatuschange.events.ApplyCustomAttribEvents;
+import io.github.secretx33.mobstatuschange.events.CreeperExplosionEvents;
+import io.github.secretx33.mobstatuschange.events.DamageModifierEvents;
+import io.github.secretx33.mobstatuschange.commands.Commands;
+import io.github.secretx33.mobstatuschange.config.Config;
+import io.github.secretx33.mobstatuschange.entity.EntityAttributes;
+import io.github.secretx33.mobstatuschange.events.LetalPoisonEvents;
+import io.github.secretx33.mobstatuschange.utils.Utils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
