@@ -1,6 +1,6 @@
 name: MobStatusChange
 version: @version@
-main: io.github.secretx33.mobstatuschange.Main
+main: com.github.secretx33.mobstatuschange.MobStatusChange
 api-version: 1.16
 authors: [SecretX]
 description: This plugin allows quick modification to mob status and damage, as well as allowing poison to kill.

@@ -14,7 +14,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
-package io.github.secretx33.mobstatuschange.config;
+package com.github.secretx33.mobstatuschange.config;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -86,9 +86,9 @@ public class Config {
         CREEPER_EXPLOSION_SHIELD_DAMAGE_BYPASS("general.creeper-explosion-shield-damage-bypass", 0.0),
         SHIELDBLOCK_MESSAGE_TEXT("general.message-player-after-shieldblocking-creeper-explosion.text", ""),
         SHIELDBLOCK_MESSAGE_CHANNEl("general.message-player-after-shieldblocking-creeper-explosion.channel", ValidChannels.CHAT),
-        SHIELDBLOCK_TITLE_FADE_IN("general.message-player-after-shieldblocking-creeper-explosion.fade-in", 1),
-        SHIELDBLOCK_TITLE_STAY_TIME("general.message-player-after-shieldblocking-creeper-explosion.stay-time", 3),
-        SHIELDBLOCK_TITLE_FADE_OUT("general.message-player-after-shieldblocking-creeper-explosion.fade-out", 1);
+        SHIELDBLOCK_TITLE_FADE_IN("general.message-player-after-shieldblocking-creeper-explosion.fade-in", 1.0),
+        SHIELDBLOCK_TITLE_STAY_TIME("general.message-player-after-shieldblocking-creeper-explosion.stay-time", 3.0),
+        SHIELDBLOCK_TITLE_FADE_OUT("general.message-player-after-shieldblocking-creeper-explosion.fade-out", 1.0);
 
         @NotNull public final String configEntry;
         @NotNull public final Object defaultValue;

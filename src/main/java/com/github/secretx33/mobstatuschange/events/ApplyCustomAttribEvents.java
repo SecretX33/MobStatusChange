@@ -14,14 +14,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
-package io.github.secretx33.mobstatuschange.events;
+package com.github.secretx33.mobstatuschange.events;
 
-import io.github.secretx33.mobstatuschange.config.Config;
-import io.github.secretx33.mobstatuschange.entity.EntityAttributesManager;
+import com.github.secretx33.mobstatuschange.entity.EntityAttributesManager;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
@@ -30,19 +28,21 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.logging.Logger;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @ParametersAreNonnullByDefault
 public class ApplyCustomAttribEvents implements Listener {
 
-    private final Plugin plugin;
+    private final Logger logger;
     private final EntityAttributesManager attributesManager;
 
-    public ApplyCustomAttribEvents(final Plugin plugin, final EntityAttributesManager attributesManager) {
+    public ApplyCustomAttribEvents(final Plugin plugin, final Logger logger, final EntityAttributesManager attributesManager) {
         checkNotNull(plugin, "plugin cannot be null");
+        checkNotNull(logger, "logger cannot be null");
         checkNotNull(attributesManager, "attributesManager cannot be null");
-        this.plugin = plugin;
+        this.logger = logger;
         this.attributesManager = attributesManager;
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
@@ -55,7 +55,6 @@ public class ApplyCustomAttribEvents implements Listener {
     }
 
     private void printEntityStats(CreatureSpawnEvent event, String identifier) {
-        if(!Config.getDebug()) return;
         if(event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER_EGG ||
                 event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.EGG ||
                 event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER ||
@@ -73,8 +72,7 @@ public class ApplyCustomAttribEvents implements Listener {
             AttributeInstance flyingSpeed         = entity.getAttribute(Attribute.GENERIC_FLYING_SPEED);
             AttributeInstance spawnReinforcements = entity.getAttribute(Attribute.ZOMBIE_SPAWN_REINFORCEMENTS);
 
-            ConsoleCommandSender sender = plugin.getServer().getConsoleSender();
-            sender.sendMessage(String.format("\n%s status of %s%s\nhp = %s (%s)\nfr = %s\ndmg = %s\natkspeed = %s\natkKnockBack = %s\nknockBackResist = %s\nmovSpeed = %s\nflyingSpeed = %s\nspawnReinforcements = %s",
+            logger.finest(String.format("\n%s status of %s%s\nhp = %s (%s)\nfr = %s\ndmg = %s\natkspeed = %s\natkKnockBack = %s\nknockBackResist = %s\nmovSpeed = %s\nflyingSpeed = %s\nspawnReinforcements = %s",
                     identifier,
                     entity.getName(),
                     (Ageable.class.isAssignableFrom(entity.getClass()) && !((Ageable)entity).isAdult()) ? " (baby)" : "",

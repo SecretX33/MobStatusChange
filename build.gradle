@@ -5,7 +5,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
-group = 'io.github.secretx33'
+group = 'com.github.secretx33'
 version = '1.0.3'
 
 sourceCompatibility = '1.8'
@@ -26,7 +26,6 @@ repositories {
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
     compileOnly 'org.jetbrains:annotations:20.1.0'
-    compileOnly 'com.google.errorprone:error_prone_annotations:2.4.0'
     compileOnly 'com.google.guava:guava:30.1-jre'
 }
 

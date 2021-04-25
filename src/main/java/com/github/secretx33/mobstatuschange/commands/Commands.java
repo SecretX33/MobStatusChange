@@ -14,10 +14,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
-package io.github.secretx33.mobstatuschange.commands;
+package com.github.secretx33.mobstatuschange.commands;
 
-import io.github.secretx33.mobstatuschange.config.Config;
-import io.github.secretx33.mobstatuschange.config.Messages;
+import com.github.secretx33.mobstatuschange.config.Config;
+import com.github.secretx33.mobstatuschange.config.Messages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -50,7 +50,7 @@ public class Commands implements CommandExecutor {
 
         final String sub = strings[0].toLowerCase(Locale.US);
         if(sub.equals("reload") && sender.hasPermission("msc.reload")){
-            config.reloadConfig();
+            config.reload();
             sender.sendMessage(Messages.CONFIGS_RELOADED);
         }
         return true;

@@ -1,6 +1,6 @@
-package io.github.secretx33.mobstatuschange.entity;
+package com.github.secretx33.mobstatuschange.entity;
 
-import io.github.secretx33.mobstatuschange.config.Messages;
+import com.github.secretx33.mobstatuschange.config.Messages;
 import javafx.util.Pair;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -32,20 +32,20 @@ public class EntityAttributesManager {
         checkNotNull(logger, "logger cannot be null");
         this.plugin = plugin;
         this.logger = logger;
-        refreshConfig();
+        reload();
     }
 
-    public void refreshConfig(){
-        populateEntityArray();
-        reloadEntityAttributes();
+    public void reload(){
+        populateAttributesMap();
+        reapplyAttributesForAllEntities();
     }
 
-    private void reloadEntityAttributes(){
+    private void reapplyAttributesForAllEntities(){
         // Removing old and applying new value to entities
         plugin.getServer().getWorlds().forEach(world -> world.getLivingEntities().forEach(this::setAttributesFor));
     }
 
-    private void populateEntityArray() {
+    private void populateAttributesMap() {
         entityAttributesMap.clear();
 
         ConfigurationSection entitiesConfig = plugin.getConfig().getConfigurationSection("entities");

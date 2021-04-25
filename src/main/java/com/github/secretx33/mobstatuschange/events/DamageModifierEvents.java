@@ -14,11 +14,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
-package io.github.secretx33.mobstatuschange.events;
+package com.github.secretx33.mobstatuschange.events;
 
-import io.github.secretx33.mobstatuschange.config.Config;
-import io.github.secretx33.mobstatuschange.entity.EntityAttributes;
-import io.github.secretx33.mobstatuschange.entity.EntityAttributesManager;
+import com.github.secretx33.mobstatuschange.config.Config;
+import com.github.secretx33.mobstatuschange.entity.EntityAttributes;
+import com.github.secretx33.mobstatuschange.entity.EntityAttributesManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -41,19 +41,24 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.logging.Logger;
 
+import static com.github.secretx33.mobstatuschange.config.Config.*;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.Math.*;
 
 @ParametersAreNonnullByDefault
 public class DamageModifierEvents implements Listener {
 
-    private final EntityAttributesManager attributesManager;
     private final Logger logger;
+    private final Config config;
+    private final EntityAttributesManager attributesManager;
 
-    public DamageModifierEvents(final Plugin plugin, final Logger logger, final EntityAttributesManager attributesManager) {
+    public DamageModifierEvents(final Plugin plugin, final Logger logger, final Config config, final EntityAttributesManager attributesManager) {
         checkNotNull(plugin, "plugin cannot be null");
         checkNotNull(logger, "logger cannot be null");
+        checkNotNull(config, "config cannot be null");
         checkNotNull(attributesManager, "attributesManager cannot be null");
         this.logger = logger;
+        this.config = config;
         this.attributesManager = attributesManager;
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
@@ -88,17 +93,17 @@ public class DamageModifierEvents implements Listener {
         if(!(defender instanceof LivingEntity)) return;
 
         // Damage is from player, it's not melee damage and alterMeleePlayerDamage is ON
-        if(isEntityPlayerOrFromPlayer(attacker) && Config.playerDamageAffectMeleeOnly() && !isCauseMeleeDamage(event.getCause()))
+        if(isEntityPlayerOrFromPlayer(attacker) && (boolean)config.get(ConfigKeys.PLAYER_DMG_MULTIPLIER_AFFECTS_MELEE_ONLY) && !isCauseMeleeDamage(event.getCause()))
             return;
 
-        if(Config.getDebug() && defender instanceof Player) logger.fine("Player " + defender.getName() + " took damage of " + attacker.getName());
+        if(defender instanceof Player) logger.fine("Player " + defender.getName() + " took damage of " + attacker.getName());
 
         final Double dmgMod = getDamageModifier(attacker);
         if(dmgMod == null || dmgMod == 1.0) return;
 
-        if(Config.getDebug() && (attacker instanceof Player || defender instanceof Player)) logger.fine(String.format("Damage from %s on %s before change was %s.", attacker.getName(), defender.getName(), event.getDamage()));
+        if(attacker instanceof Player || defender instanceof Player) logger.fine(String.format("Damage from %s on %s before change was %s.", attacker.getName(), defender.getName(), event.getDamage()));
         event.setDamage(event.getDamage() * dmgMod);
-        if(Config.getDebug() && (attacker instanceof Player || defender instanceof Player)) logger.fine(String.format("Damage from %s on %s after change is %s.", attacker.getName(), defender.getName(), event.getDamage()));
+        if(attacker instanceof Player || defender instanceof Player) logger.fine(String.format("Damage from %s on %s after change is %s.", attacker.getName(), defender.getName(), event.getDamage()));
     }
 
     private boolean isEntityPlayerOrFromPlayer(Entity e){
@@ -106,7 +111,7 @@ public class DamageModifierEvents implements Listener {
     }
 
     private boolean isCauseMeleeDamage(DamageCause cause){
-        return cause == EntityDamageEvent.DamageCause.ENTITY_ATTACK || cause == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK;
+        return cause == DamageCause.ENTITY_ATTACK || cause == DamageCause.ENTITY_SWEEP_ATTACK;
     }
     // Replace any poison potion thrown by a mob that has damage mod by a stronger (or weaker) one
 
@@ -133,9 +138,9 @@ public class DamageModifierEvents implements Listener {
         event.setCancelled(true);
         PotionEffect potionEffect = (PotionEffect)thrownPotion.getEffects().toArray()[0];
         final int duration = potionEffect.getDuration();
-        final int amplifier = (int)Math.round(potionEffect.getAmplifier() * ((dmgMod > 1) ? dmgMod*2 : dmgMod));  // Poison is too weak, so I'm boosting its damage a bit if user has increased mob's damage above baseline (1)
+        final int amplifier = (int)round(potionEffect.getAmplifier() * ((dmgMod > 1) ? dmgMod*2 : dmgMod));  // Poison is too weak, so I'm boosting its damage a bit if user has increased mob's damage above baseline (1)
         final PotionEffectType type = potionEffect.getType();
-        final PotionEffect pe = new PotionEffect(type, duration, Math.max(0, Math.min(amplifier, 31))); // Refer to https://minecraft.gamepedia.com/Poison#cite_note-immunity_2-2:~:text=Amplifiers%20outside%20the%20range%200%E2%80%9331%20(corresponding,or%2065%20is%20treated%20as%201).
+        final PotionEffect pe = new PotionEffect(type, duration, max(0, min(amplifier, 31))); // Refer to https://minecraft.gamepedia.com/Poison#cite_note-immunity_2-2:~:text=Amplifiers%20outside%20the%20range%200%E2%80%9331%20(corresponding,or%2065%20is%20treated%20as%201).
         event.getAffectedEntities().forEach(livingEntity -> livingEntity.addPotionEffect(pe));
     }
     // Fire duration is also increased by dmgMod, since it's not possible to change fire damage directly
@@ -147,13 +152,13 @@ public class DamageModifierEvents implements Listener {
         if(!(defender instanceof LivingEntity)) return;
 
         // Damage is from player and playerDamageAffectMeleeOnly is ON
-        if(isEntityPlayerOrFromPlayer(attacker) && Config.playerDamageAffectMeleeOnly()) return;
+        if(isEntityPlayerOrFromPlayer(attacker) && (boolean)config.get(ConfigKeys.PLAYER_DMG_MULTIPLIER_AFFECTS_MELEE_ONLY)) return;
 
         final Double dmgMod = getDamageModifier(attacker);
         if(dmgMod == null || dmgMod == 1.0) return;
 
-        if(Config.getDebug() && defender instanceof Player) logger.fine(String.format("Fire duration from %s on %s before change was %s.", attacker.getName(), defender.getName(), event.getDuration()));
-        event.setDuration((int)Math.round(event.getDuration() * dmgMod));
-        if(Config.getDebug() && defender instanceof Player) logger.fine(String.format("Fire duration from %s on %s after change is %s.", attacker.getName(), defender.getName(), event.getDuration()));
+        if(defender instanceof Player) logger.fine(String.format("Fire duration from %s on %s before change was %s.", attacker.getName(), defender.getName(), event.getDuration()));
+        event.setDuration((int) round(event.getDuration() * dmgMod));
+        if(defender instanceof Player) logger.fine(String.format("Fire duration from %s on %s after change is %s.", attacker.getName(), defender.getName(), event.getDuration()));
     }
 }

@@ -14,7 +14,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
-package io.github.secretx33.mobstatuschange.entity;
+package com.github.secretx33.mobstatuschange.entity;
 
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.EntityType;

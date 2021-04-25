@@ -14,11 +14,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
-package io.github.secretx33.mobstatuschange.events;
+package com.github.secretx33.mobstatuschange.events;
 
-import io.github.secretx33.mobstatuschange.config.Config;
-import io.github.secretx33.mobstatuschange.config.KilledByPoison;
-import io.github.secretx33.mobstatuschange.config.Messages;
+import com.github.secretx33.mobstatuschange.config.Config;
+import com.github.secretx33.mobstatuschange.config.Config.ConfigKeys;
+import com.github.secretx33.mobstatuschange.config.Messages;
+import com.github.secretx33.mobstatuschange.config.KilledByPoison;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -27,6 +28,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
@@ -45,23 +47,26 @@ import static java.lang.Math.round;
 public class LethalPoisonEvents implements Listener {
 
     private final Plugin plugin;
+    private final Config config;
     private final Set<UUID> scheduledPoisonChecks = new HashSet<>();
 
-    public LethalPoisonEvents(Plugin plugin) {
-        checkNotNull(plugin);
+    public LethalPoisonEvents(Plugin plugin, final Config config) {
+        checkNotNull(plugin, "plugin cannot be null");
+        checkNotNull(config, "config cannot be null");
         this.plugin = plugin;
+        this.config = config;
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler
     private void onPoisonTick(EntityDamageEvent event){
-        if(event.getCause() != EntityDamageEvent.DamageCause.POISON || Config.getWhoDieOfPoison() == KilledByPoison.NONE) return;
+        final KilledByPoison poisonKills = config.get(ConfigKeys.ENTITY_TYPE_KILLED_BY_POISON);
+        if(event.getCause() != DamageCause.POISON || poisonKills == KilledByPoison.NONE) return;
 
         Entity entity = event.getEntity();
         if(!(entity instanceof LivingEntity)) return;
-        final KilledByPoison whoDies = Config.getWhoDieOfPoison();
 
-        if(whoDies == KilledByPoison.ALL || whoDies == KilledByPoison.PLAYERS && entity instanceof Player || whoDies == KilledByPoison.MONSTERS && entity instanceof Monster) return;
+        if(poisonKills == KilledByPoison.ALL || poisonKills == KilledByPoison.PLAYERS && entity instanceof Player || poisonKills == KilledByPoison.MONSTERS && entity instanceof Monster) return;
         LivingEntity livingEntity = (LivingEntity)entity;
 
         // if the entity HP is higher than the threshold, return
@@ -108,13 +113,14 @@ public class LethalPoisonEvents implements Listener {
     @EventHandler
     private void onPlayerQuit(PlayerQuitEvent event){
         final Player player = event.getPlayer();
-        if(Config.getWhoDieOfPoison() == KilledByPoison.NONE || !scheduledPoisonChecks.contains(player.getUniqueId())) return;
+        final KilledByPoison poisonKills = config.get(ConfigKeys.ENTITY_TYPE_KILLED_BY_POISON);
+        if(poisonKills == KilledByPoison.NONE || !scheduledPoisonChecks.contains(player.getUniqueId())) return;
         killByPoison(event.getPlayer());
         scheduledPoisonChecks.remove(event.getPlayer().getUniqueId());
     }
 
     private void killByPoison(final LivingEntity livingEntity) {
-        EntityDamageEvent event = new EntityDamageEvent(livingEntity, EntityDamageEvent.DamageCause.POISON, 100_000);
+        EntityDamageEvent event = new EntityDamageEvent(livingEntity, DamageCause.POISON, 100_000);
         Bukkit.getPluginManager().callEvent(event);
         if(event.isCancelled()) return;
         livingEntity.setLastDamageCause(event);

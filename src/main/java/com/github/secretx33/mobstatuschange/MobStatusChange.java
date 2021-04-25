@@ -14,18 +14,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
-package io.github.secretx33.mobstatuschange;
+package com.github.secretx33.mobstatuschange;
 
-import io.github.secretx33.mobstatuschange.commands.Commands;
-import io.github.secretx33.mobstatuschange.config.Config;
-import io.github.secretx33.mobstatuschange.entity.EntityAttributesManager;
-import io.github.secretx33.mobstatuschange.events.ApplyCustomAttribEvents;
-import io.github.secretx33.mobstatuschange.events.CreeperExplosionEvents;
-import io.github.secretx33.mobstatuschange.events.DamageModifierEvents;
-import io.github.secretx33.mobstatuschange.events.LethalPoisonEvents;
+import com.github.secretx33.mobstatuschange.commands.Commands;
+import com.github.secretx33.mobstatuschange.config.Config;
+import com.github.secretx33.mobstatuschange.entity.EntityAttributesManager;
+import com.github.secretx33.mobstatuschange.events.ApplyCustomAttribEvents;
+import com.github.secretx33.mobstatuschange.events.CreeperExplosionEvents;
+import com.github.secretx33.mobstatuschange.events.DamageModifierEvents;
+import com.github.secretx33.mobstatuschange.events.LethalPoisonEvents;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Main extends JavaPlugin {
+public class MobStatusChange extends JavaPlugin {
 
     @Override
     public void onEnable() {
@@ -33,10 +33,10 @@ public class Main extends JavaPlugin {
         final Config config = new Config(this, getLogger());
         final EntityAttributesManager attributesManager = new EntityAttributesManager(this, getLogger());
         new Commands(this, config);
-        new ApplyCustomAttribEvents(this, attributesManager);
-        new DamageModifierEvents(this, getLogger(), attributesManager);
-        new CreeperExplosionEvents(this, getLogger(), attributesManager);
-        new LethalPoisonEvents(this);
+        new ApplyCustomAttribEvents(this, getLogger(), attributesManager);
+        new DamageModifierEvents(this, getLogger(), config, attributesManager);
+        new CreeperExplosionEvents(this, getLogger(), config, attributesManager);
+        new LethalPoisonEvents(this, config);
         getLogger().info("loaded.");
     }
 

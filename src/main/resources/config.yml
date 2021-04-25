@@ -95,9 +95,9 @@ general:
     text: ""
     channel: chat  # valid parameters: chat, title
     # below parameters are valid only if channel is set to title
-    fade-in: 1     # in seconds
-    stay-time: 3   # in seconds
-    fade-out: 1    # in seconds
+    fade-in: 1.0     # in seconds
+    stay-time: 3.0   # in seconds
+    fade-out: 1.0    # in seconds
 
 ############################################################
 # +------------------------------------------------------+ #
