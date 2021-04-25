@@ -17,56 +17,41 @@ along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
 package io.github.secretx33.mobstatuschange.commands;
 
 import io.github.secretx33.mobstatuschange.config.Config;
-import io.github.secretx33.mobstatuschange.config.Const;
-import io.github.secretx33.mobstatuschange.entity.EntityAttributes;
-import io.github.secretx33.mobstatuschange.Main;
+import io.github.secretx33.mobstatuschange.config.Messages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Locale;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+@ParametersAreNonnullByDefault
 public class Commands implements CommandExecutor {
 
-    private final Main plugin;
+    private final JavaPlugin plugin;
+    private final Config config;
 
-    public Commands(@NotNull Main plugin) {
+    public Commands(final JavaPlugin plugin, final Config config) {
+        checkNotNull(plugin, "plugin cannot be null");
+        checkNotNull(config, "config cannot be null");
         this.plugin = plugin;
+        this.config = config;
         PluginCommand cmd = plugin.getCommand("msc");
-        if (cmd != null) cmd.setExecutor(this);
+        if(cmd != null) cmd.setExecutor(this);
     }
 
     @Override @ParametersAreNonnullByDefault
     public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
-        if (strings != null && strings.length > 0) {
-            for(int i=0; i < strings.length; i++){
-                strings[i] = strings[i].toLowerCase(Locale.US);
-            }
+        if(strings.length == 0) return true;
 
-            switch (strings[0]) {
-                case "reload":
-                    if (sender.hasPermission("msc.reload")) {
-                        plugin.saveDefaultConfig();
-                        plugin.reloadConfig();
-                        Config.reloadConfig();
-                        EntityAttributes.refreshConfig();
-                        sender.sendMessage(Const.CONFIGS_RELOADED);
-                    }
-                    break;
-                case "debug":
-                    if (sender.hasPermission("msc.debug")) {
-                        FileConfiguration config = plugin.getConfig();
-                        Config.setDebug(!Config.getDebug());
-                        config.set("general.debug", Config.getDebug());
-                        plugin.saveConfig();
-                        sender.sendMessage(String.format(Const.DEBUG_MODE_STATE_CHANGED, (Config.getDebug()) ? "ON" : "OFF"));
-                    }
-                    break;
-            }
+        final String sub = strings[0].toLowerCase(Locale.US);
+        if(sub.equals("reload") && sender.hasPermission("msc.reload")){
+            config.reloadConfig();
+            sender.sendMessage(Messages.CONFIGS_RELOADED);
         }
         return true;
     }

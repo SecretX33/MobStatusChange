@@ -16,196 +16,86 @@ along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
 package io.github.secretx33.mobstatuschange.config;
 
-import io.github.secretx33.mobstatuschange.Main;
-import io.github.secretx33.mobstatuschange.config.Const.KilledByPoison;
-import io.github.secretx33.mobstatuschange.config.Const.ValidChannels;
-import io.github.secretx33.mobstatuschange.utils.Utils;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class Config {
-    private static Main plugin;
-    private static boolean playerDamageAffectMeleeOnly;
-    private static KilledByPoison whoDieOfPoison = null;
-    private static boolean creeperExplosionInstaBreakShields;
-    private static double creeperExplosionShieldBypassPercent;
-    private static String messagePlayerAfterShieldblockingCreeperExplosion = null;
-    private static ValidChannels channel = ValidChannels.CHAT;
-    private static int fadeIn = 0;
-    private static int stayTime = 0;
-    private static int fadeOut = 0;
-    private static boolean debug = false;
+    @NotNull private final Plugin plugin;
+    @NotNull private final Logger logger;
 
-    private Config() {}
+    private final Map<String, Object> cache = new HashMap<>();
 
-    public static void reloadConfig(){
-        if(plugin == null) {
-            throw new NullPointerException("Plugin variable was not set yet.");
-        }
+    public Config(@NotNull final Plugin plugin, @NotNull final Logger logger) {
+        checkNotNull(plugin, "plugin cannot be null");
+        checkNotNull(logger, "logger cannot be null");
+        this.plugin = plugin;
+        this.logger = logger;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key, T defaultValue) {
+        checkNotNull(key, "key cannot be null");
+        checkNotNull(defaultValue, "defaultValue cannot be null");
+
         FileConfiguration config = plugin.getConfig();
-        String section = "general";
-        ConfigurationSection general = null;
-        if(config.isSet(section)){
-            general = config.getConfigurationSection(section);
-        }
-        if (general == null) {
-            Utils.consoleMessage(String.format(Const.SECTION_NOT_FOUND, section));
-            return;
-        }
 
-        // Parsing configs
-        String field = "entities-killed-by-poison";
-        whoDieOfPoison = KilledByPoison.NONE;
-        if(general.isSet(field)){
-            String s = general.getString(field);
-            if(s != null){
-                KilledByPoison whoDies = Arrays.stream(KilledByPoison.values()).filter(v -> v.name().equalsIgnoreCase(s)).findAny().orElse(null);
-                if(whoDies != null) {
-                    whoDieOfPoison = whoDies;
-                } else {
-                    Utils.consoleMessage(String.format(Const.INVALID_ENTRY_VALUE, field, s));
-                }
-            } else Utils.consoleMessage(String.format(Const.ENTRY_HAS_NO_VALUE, field));
-        } else {
-            Utils.consoleMessage(String.format(Const.ENTRY_NOT_FOUND, field));
+        if(defaultValue.getClass().isEnum()) {
+            final String value = (config.getString(key) != null) ? config.getString(key) : "";
+            try {
+                return (T) cache.computeIfAbsent(key, k -> Enum.valueOf(((Enum<?>) defaultValue).getDeclaringClass(), value));
+            } catch(IllegalArgumentException e) {
+                logger.severe("Error while trying to get value of '" + key + "', please fix this entry in the config.yml and reload the configs, defaulting to " + ((Enum<?>) defaultValue).name());
+            }
+            return defaultValue;
         }
 
-        field = "atk-damage-of-player-affects-only-melee";
-        playerDamageAffectMeleeOnly = false;
-        if(general.isSet(field)){
-            String s = general.getString(field);
-            if(s != null){
-                playerDamageAffectMeleeOnly = general.getBoolean(field);
-            } else
-                Utils.consoleMessage(String.format(Const.ENTRY_HAS_NO_VALUE, field));
-        } else {
-            Utils.consoleMessage(String.format(Const.ENTRY_NOT_FOUND, field));
+        return (T) cache.computeIfAbsent(key, k -> {
+            Object configEntry = plugin.getConfig().get(key);
+            if(configEntry != null && !(defaultValue.getClass().isAssignableFrom(configEntry.getClass()))) {
+                logger.severe("Error while trying to get value of '" + key + "', it was supposed to be a " + defaultValue.getClass().getSimpleName() + " but instead it was a " + configEntry.getClass().getSimpleName() + ", please fix this entry in the config.yml and reload the configs, defaulting to " + defaultValue);
+                return defaultValue;
+            }
+            if(configEntry == null) return defaultValue;
+            return configEntry;
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T get(ConfigKeys key) {
+        checkNotNull(key, "key cannot be null");
+        return get(key.configEntry, (T) key.defaultValue);
+    }
+
+    public void reload() {
+        cache.clear();
+        plugin.saveDefaultConfig();
+        plugin.reloadConfig();
+    }
+
+    public enum ConfigKeys {
+        ENTITY_TYPE_KILLED_BY_POISON("general.entities-killed-by-poison", KilledByPoison.ALL),
+        PLAYER_DMG_MULTIPLIER_AFFECTS_MELEE_ONLY("general.atk-damage-of-player-affects-only-melee", false),
+        CREEPER_EXPLOSION_INSTA_BREAK_SHIELDS("general.creeper-explosion-insta-break-shields", false),
+        CREEPER_EXPLOSION_SHIELD_DAMAGE_BYPASS("general.creeper-explosion-shield-damage-bypass", 0.0),
+        SHIELDBLOCK_MESSAGE_TEXT("general.message-player-after-shieldblocking-creeper-explosion.text", ""),
+        SHIELDBLOCK_MESSAGE_CHANNEl("general.message-player-after-shieldblocking-creeper-explosion.channel", ValidChannels.CHAT),
+        SHIELDBLOCK_TITLE_FADE_IN("general.message-player-after-shieldblocking-creeper-explosion.fade-in", 1),
+        SHIELDBLOCK_TITLE_STAY_TIME("general.message-player-after-shieldblocking-creeper-explosion.stay-time", 3),
+        SHIELDBLOCK_TITLE_FADE_OUT("general.message-player-after-shieldblocking-creeper-explosion.fade-out", 1);
+
+        @NotNull public final String configEntry;
+        @NotNull public final Object defaultValue;
+
+        ConfigKeys(@NotNull final String configEntry, @NotNull final Object defaultValue) {
+            this.configEntry = configEntry;
+            this.defaultValue = defaultValue;
         }
-
-        field = "creeper-explosion-insta-break-shields";
-        creeperExplosionInstaBreakShields = false;
-        if(general.isSet(field)){
-            boolean b = general.getBoolean(field);
-            creeperExplosionInstaBreakShields = general.getBoolean(field);
-        } else {
-            Utils.consoleMessage(String.format(Const.ENTRY_NOT_FOUND, field));
-        }
-
-        field = "creeper-explosion-shield-damage-bypass";
-        creeperExplosionShieldBypassPercent = 0;
-        if(general.isSet(field)){
-            creeperExplosionShieldBypassPercent = Math.max(0, Math.min(1, general.getDouble(field)));
-        } else {
-            Utils.consoleMessage(String.format(Const.ENTRY_NOT_FOUND, field));
-        }
-
-        section = "message-player-after-shieldblocking-creeper-explosion";
-        if(!general.isSet(section)){
-            Utils.consoleMessage(String.format(Const.SECTION_NOT_FOUND,section));
-            return;
-        }
-        section += ".";
-
-        field = section + "text";
-        if(general.isSet(field)){
-            String s = general.getString(field);
-            if(s != null && !s.equalsIgnoreCase("")){
-                messagePlayerAfterShieldblockingCreeperExplosion = s.replaceAll("&","§");
-            } else if(s == null)
-                Utils.consoleMessage(String.format(Const.ENTRY_HAS_NO_VALUE, field));
-        } else {
-            Utils.consoleMessage(String.format(Const.ENTRY_NOT_FOUND, field));
-        }
-
-        field = section + "channel";
-        if(general.isSet(field)){
-            String s = general.getString(field);
-            if(s != null && !s.equalsIgnoreCase("")){
-                channel = Arrays.stream(ValidChannels.values()).filter(c -> c.name().equalsIgnoreCase(s)).findAny().orElse(null);
-                if(channel == null)
-                    Utils.consoleMessage(String.format(Const.INVALID_ENTRY_VALUE, field, s));
-            } else if(s == null)
-                Utils.consoleMessage(String.format(Const.ENTRY_HAS_NO_VALUE, field));
-        } else {
-            Utils.consoleMessage(String.format(Const.ENTRY_NOT_FOUND, field));
-        }
-
-        field = section + "fade-in";
-        if(general.isSet(field)){
-            fadeIn = Math.max(0, general.getInt(field));
-        } else {
-            Utils.consoleMessage(String.format(Const.ENTRY_NOT_FOUND, field));
-        }
-
-        field = section + "stay-time";
-        if(general.isSet(field)){
-            stayTime = Math.max(0, general.getInt(field));
-        } else {
-            Utils.consoleMessage(String.format(Const.ENTRY_NOT_FOUND, field));
-        }
-
-        field = section + "fade-out";
-        if(general.isSet(field)){
-            fadeOut = Math.max(0, general.getInt(field));
-        } else {
-            Utils.consoleMessage(String.format(Const.ENTRY_NOT_FOUND, field));
-        }
-
-        if(config.isSet("general.debug")) debug = config.getBoolean("general.debug");
-    }
-
-    public static void setPlugin(@NotNull Main p) {
-        plugin = p;
-    }
-
-    public static KilledByPoison getWhoDieOfPoison() {
-        return whoDieOfPoison;
-    }
-
-    public static boolean playerDamageAffectMeleeOnly() {
-        return playerDamageAffectMeleeOnly;
-    }
-
-    public static boolean doesCreeperExplosionInstaBreakShields() {
-        return creeperExplosionInstaBreakShields;
-    }
-
-    public static double getCreeperExplosionShieldBypassPercent() {
-        return creeperExplosionShieldBypassPercent;
-    }
-
-    public static boolean shouldMsgPlayerAfterShieldblockingCreeperExplosion() {
-        return messagePlayerAfterShieldblockingCreeperExplosion != null && !messagePlayerAfterShieldblockingCreeperExplosion.equals("");
-    }
-
-    public static String getMessagePlayerAfterShieldblockingCreeperExplosion() {
-        return messagePlayerAfterShieldblockingCreeperExplosion;
-    }
-
-    public static ValidChannels getChannel() {
-        return channel;
-    }
-
-    public static int getFadeIn() {
-        return fadeIn;
-    }
-
-    public static int getStayTime() {
-        return stayTime;
-    }
-
-    public static int getFadeOut() {
-        return fadeOut;
-    }
-
-    public static boolean getDebug(){
-        return debug;
-    }
-
-    public static void setDebug(boolean debug) {
-        Config.debug = debug;
     }
 }

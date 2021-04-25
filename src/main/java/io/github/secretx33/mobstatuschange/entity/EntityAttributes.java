@@ -66,31 +66,31 @@ public class EntityAttributes {
         this.entityType = entityType;
         this.isBaby = isBaby;
 
-        if(hpMod != null) this.hpMod = new AttributeModifier(hpUID, "", convertMod(hpMod), AttributeModifier.Operation.ADD_SCALAR);
+        if(hpMod != null && hpMod > Double.MIN_VALUE) this.hpMod = new AttributeModifier(hpUID, "", convertMod(hpMod), AttributeModifier.Operation.ADD_SCALAR);
         else this.hpMod = null;
 
-        if(followRangeMod != null) this.followRangeMod = new AttributeModifier(followRangeUID, "", convertMod(followRangeMod), AttributeModifier.Operation.ADD_SCALAR);
+        if(followRangeMod != null && followRangeMod > Double.MIN_VALUE) this.followRangeMod = new AttributeModifier(followRangeUID, "", convertMod(followRangeMod), AttributeModifier.Operation.ADD_SCALAR);
         else this.followRangeMod = null;
 
-        if(atkDamageMod != null) this.atkDamageMod = atkDamageMod;
+        if(atkDamageMod != null && atkDamageMod > Double.MIN_VALUE) this.atkDamageMod = atkDamageMod;
         else this.atkDamageMod = null;
 
-        if(atkKnockBackMod != null) this.atkKnockBackMod = new AttributeModifier(atkKnockBackUID, "", atkKnockBackMod, AttributeModifier.Operation.ADD_NUMBER);
+        if(atkKnockBackMod != null && atkKnockBackMod > Double.MIN_VALUE) this.atkKnockBackMod = new AttributeModifier(atkKnockBackUID, "", atkKnockBackMod, AttributeModifier.Operation.ADD_NUMBER);
         else this.atkKnockBackMod = null;
 
-        if(knockBackResistMod != null) this.knockBackResistMod = new AttributeModifier(knockBackResistUID, "", knockBackResistMod, AttributeModifier.Operation.ADD_NUMBER);
+        if(knockBackResistMod != null && knockBackResistMod > Double.MIN_VALUE) this.knockBackResistMod = new AttributeModifier(knockBackResistUID, "", knockBackResistMod, AttributeModifier.Operation.ADD_NUMBER);
         else this.knockBackResistMod = null;
 
-        if(movSpeedMod != null) this.movSpeedMod = new AttributeModifier(movSpeedUID, "", convertMod(movSpeedMod), AttributeModifier.Operation.ADD_SCALAR);
+        if(movSpeedMod != null && movSpeedMod > Double.MIN_VALUE) this.movSpeedMod = new AttributeModifier(movSpeedUID, "", convertMod(movSpeedMod), AttributeModifier.Operation.ADD_SCALAR);
         else this.movSpeedMod = null;
 
-        if(arg1 != null && opArg1 != null) {
+        if(arg1 != null && arg1 > Double.MIN_VALUE && opArg1 != null) {
             if(opArg1 == AttributeModifier.Operation.ADD_NUMBER) this.arg1 = new AttributeModifier(arg1UID, "", arg1, opArg1);
             else this.arg1 = new AttributeModifier(arg1UID, "", convertMod(arg1), opArg1);
         }
         else this.arg1 = null;
 
-        if(arg2 != null && opArg2 != null){
+        if(arg2 != null && arg2 > Double.MIN_VALUE && opArg2 != null){
             if(opArg1 == AttributeModifier.Operation.ADD_NUMBER) this.arg2 = new AttributeModifier(arg2UID, "", arg2, opArg2);
             else this.arg2 = new AttributeModifier(arg1UID, "", convertMod(arg2), opArg2);
         }

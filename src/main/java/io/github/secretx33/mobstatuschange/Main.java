@@ -16,67 +16,32 @@ along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
 package io.github.secretx33.mobstatuschange;
 
+import io.github.secretx33.mobstatuschange.commands.Commands;
+import io.github.secretx33.mobstatuschange.config.Config;
+import io.github.secretx33.mobstatuschange.entity.EntityAttributesManager;
 import io.github.secretx33.mobstatuschange.events.ApplyCustomAttribEvents;
 import io.github.secretx33.mobstatuschange.events.CreeperExplosionEvents;
 import io.github.secretx33.mobstatuschange.events.DamageModifierEvents;
-import io.github.secretx33.mobstatuschange.commands.Commands;
-import io.github.secretx33.mobstatuschange.config.Config;
-import io.github.secretx33.mobstatuschange.entity.EntityAttributes;
-import io.github.secretx33.mobstatuschange.events.LetalPoisonEvents;
-import io.github.secretx33.mobstatuschange.utils.Utils;
+import io.github.secretx33.mobstatuschange.events.LethalPoisonEvents;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
 
-    private int tps = 0;
-
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        Utils.setPlugin(this);
-        Config.setPlugin(this);
-        Config.reloadConfig();
-        EntityAttributes.setPlugin(this);
-        Commands cmds = new Commands(this);
-        ApplyCustomAttribEvents applyCustomAttribEvents = new ApplyCustomAttribEvents(this);
-        DamageModifierEvents damageModifierEvents = new DamageModifierEvents(this);
-        CreeperExplosionEvents creeperExplosionEvents = new CreeperExplosionEvents(this);
-        LetalPoisonEvents letalPoisonEvents = new LetalPoisonEvents(this);
-
-        // Measuring TPS
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-            long sec;
-            long currentSec;
-            int ticks;
-            int delay;
-
-            @Override
-            public void run() {
-                sec = (System.currentTimeMillis() / 1000);
-
-                if (currentSec == sec) { // this code block triggers each tick
-                    ticks++;
-                } else { // this code block triggers each second
-                    currentSec = sec;
-                    tps = (tps == 0 ? ticks : ((tps + ticks) / 2));
-                    ticks = 0;
-
-                    if ((++delay % 300) == 0) {// this code block triggers each 5 minutes
-                        delay = 0;
-                    }
-                }
-            }
-        }, 0, 1); // do not change the "1" value, the other one is just initial delay, I recommend 0 = start instantly.
-        Utils.consoleMessage("loaded.");
+        final Config config = new Config(this, getLogger());
+        final EntityAttributesManager attributesManager = new EntityAttributesManager(this, getLogger());
+        new Commands(this, config);
+        new ApplyCustomAttribEvents(this, attributesManager);
+        new DamageModifierEvents(this, getLogger(), attributesManager);
+        new CreeperExplosionEvents(this, getLogger(), attributesManager);
+        new LethalPoisonEvents(this);
+        getLogger().info("loaded.");
     }
 
     @Override
     public void onDisable() {
-        getServer().getScheduler().cancelTasks(this);
-        Utils.consoleMessage("disabled.");
-    }
-
-    public int getTps() {
-        return tps;
+        getLogger().info("disabled.");
     }
 }
