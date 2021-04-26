@@ -42,11 +42,11 @@ public class Config {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T get(String key, T defaultValue) {
+    public <T> T get(final String key, final T defaultValue) {
         checkNotNull(key, "key cannot be null");
         checkNotNull(defaultValue, "defaultValue cannot be null");
 
-        FileConfiguration config = plugin.getConfig();
+        final FileConfiguration config = plugin.getConfig();
 
         if(defaultValue.getClass().isEnum()) {
             final String value = (config.getString(key) != null) ? config.getString(key) : "";
@@ -61,10 +61,10 @@ public class Config {
         }
 
         return (T) cache.computeIfAbsent(key, k -> {
-            Object configEntry = plugin.getConfig().get(key);
+            final Object configEntry = plugin.getConfig().get(key);
             // If entry is not present, silent fail to default value
             if(configEntry == null) return defaultValue;
-            // If the entry is present but the value type is not the expected one, warn in the console
+            // If the entry is present but its type is not the expected one, warn in the console
             if(!defaultValue.getClass().isAssignableFrom(configEntry.getClass())) {
                 logger.severe("Error while trying to get config key '" + key + "', it was supposed to be a " + defaultValue.getClass().getSimpleName() + " but instead it was a " + configEntry.getClass().getSimpleName() + ", please fix this entry in the config.yml and reload the configs, defaulting to " + defaultValue);
                 return defaultValue;
@@ -74,12 +74,12 @@ public class Config {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T get(ConfigKeys key) {
+    public <T> T get(final ConfigKeys key) {
         checkNotNull(key, "key cannot be null");
         return get(key.configEntry, (T) key.defaultValue);
     }
 
-    public String color(String string) {
+    public String color(final String string) {
         return ChatColor.translateAlternateColorCodes('&', string);
     }
 
