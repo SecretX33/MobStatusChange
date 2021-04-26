@@ -1,6 +1,6 @@
 name: MobStatusChange
 version: @version@
-main: io.github.secretx33.mobstatuschange.Main
+main: com.github.secretx33.mobstatuschange.MobStatusChange
 api-version: 1.16
 authors: [SecretX]
 description: This plugin allows quick modification to mob status and damage, as well as allowing poison to kill.
@@ -13,14 +13,13 @@ commands:
     aliases: mobstatuschange
 
 permissions:
+
   msc.*:
     description: Gives access to all @name@ commands
     children:
       msc.reload: true
       msc.debug: true
+
   msc.reload:
     description: Allows you to reload the plugin config
-    default: op
-  msc.debug:
-    description: Allows you to toggle debug mode (for developers only)
     default: op

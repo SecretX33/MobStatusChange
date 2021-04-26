@@ -5,28 +5,21 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
-group = 'io.github.secretx33'
-version = '1.0.2'
+group = 'com.github.secretx33'
+version = '1.0.3'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 repositories {
     mavenCentral()
-    maven {
-        name = 'spigotmc-repo'
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-    }
-    maven {
-        name = 'sonatype'
-        url = 'https://oss.sonatype.org/content/groups/public/'
-    }
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://oss.sonatype.org/content/groups/public/' }
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.16.3-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
     compileOnly 'org.jetbrains:annotations:20.1.0'
-    compileOnly 'com.google.errorprone:error_prone_annotations:2.4.0'
     compileOnly 'com.google.guava:guava:30.1-jre'
 }
 
@@ -42,10 +35,7 @@ artifacts { archives shadowJar }
 
 shadowJar {
     archiveFileName = rootProject.name + '.jar'
-    from('LICENSE').rename('(LICENSE)', '$1.txt')
-
-    /*relocate 'com.google.thirdparty', 'io.github.secretx.lib.thirdparty'
-    relocate 'com.google.common', 'io.github.secretx.lib.guava'*/
+//    from('LICENSE').rename('(LICENSE)', '$1.txt')
 }
 
 processResources {
