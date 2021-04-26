@@ -18,30 +18,36 @@ package com.github.secretx33.mobstatuschange.commands;
 
 import com.github.secretx33.mobstatuschange.config.Config;
 import com.github.secretx33.mobstatuschange.config.Messages;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
+import com.github.secretx33.mobstatuschange.entity.EntityAttributesManager;
+import org.bukkit.command.*;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @ParametersAreNonnullByDefault
-public class Commands implements CommandExecutor {
+public class Commands implements CommandExecutor, TabCompleter {
 
-    private final JavaPlugin plugin;
     private final Config config;
+    private final EntityAttributesManager attributesManager;
 
-    public Commands(final JavaPlugin plugin, final Config config) {
+    public Commands(final JavaPlugin plugin, final Config config, final EntityAttributesManager attributesManager) {
         checkNotNull(plugin, "plugin cannot be null");
         checkNotNull(config, "config cannot be null");
-        this.plugin = plugin;
+        checkNotNull(attributesManager, "attributesManager cannot be null");
         this.config = config;
+        this.attributesManager = attributesManager;
         PluginCommand cmd = plugin.getCommand("msc");
-        if(cmd != null) cmd.setExecutor(this);
+        if(cmd != null){
+            cmd.setExecutor(this);
+            cmd.setTabCompleter(this);
+        }
     }
 
     @Override @ParametersAreNonnullByDefault
@@ -51,8 +57,16 @@ public class Commands implements CommandExecutor {
         final String sub = strings[0].toLowerCase(Locale.US);
         if(sub.equals("reload") && sender.hasPermission("msc.reload")){
             config.reload();
+            attributesManager.reload();
             sender.sendMessage(Messages.CONFIGS_RELOADED);
         }
         return true;
+    }
+
+    @Nullable
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        if(!sender.hasPermission("msc.reload")) return Collections.emptyList();
+        return Collections.singletonList("reload");
     }
 }

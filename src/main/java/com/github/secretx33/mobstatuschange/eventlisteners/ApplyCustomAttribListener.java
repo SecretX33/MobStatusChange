@@ -14,7 +14,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.github.secretx33.mobstatuschange.events;
+package com.github.secretx33.mobstatuschange.eventlisteners;
 
 import com.github.secretx33.mobstatuschange.entity.EntityAttributesManager;
 import org.bukkit.Bukkit;
@@ -33,12 +33,12 @@ import java.util.logging.Logger;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @ParametersAreNonnullByDefault
-public class ApplyCustomAttribEvents implements Listener {
+public class ApplyCustomAttribListener implements Listener {
 
     private final Logger logger;
     private final EntityAttributesManager attributesManager;
 
-    public ApplyCustomAttribEvents(final Plugin plugin, final Logger logger, final EntityAttributesManager attributesManager) {
+    public ApplyCustomAttribListener(final Plugin plugin, final Logger logger, final EntityAttributesManager attributesManager) {
         checkNotNull(plugin, "plugin cannot be null");
         checkNotNull(logger, "logger cannot be null");
         checkNotNull(attributesManager, "attributesManager cannot be null");

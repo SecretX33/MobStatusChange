@@ -13,14 +13,13 @@ commands:
     aliases: mobstatuschange
 
 permissions:
+
   msc.*:
     description: Gives access to all @name@ commands
     children:
       msc.reload: true
       msc.debug: true
+
   msc.reload:
     description: Allows you to reload the plugin config
-    default: op
-  msc.debug:
-    description: Allows you to toggle debug mode (for developers only)
     default: op

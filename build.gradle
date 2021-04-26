@@ -13,14 +13,8 @@ targetCompatibility = '1.8'
 
 repositories {
     mavenCentral()
-    maven {
-        name = 'spigotmc-repo'
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-    }
-    maven {
-        name = 'sonatype'
-        url = 'https://oss.sonatype.org/content/groups/public/'
-    }
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://oss.sonatype.org/content/groups/public/' }
 }
 
 dependencies {
@@ -41,7 +35,7 @@ artifacts { archives shadowJar }
 
 shadowJar {
     archiveFileName = rootProject.name + '.jar'
-    from('LICENSE').rename('(LICENSE)', '$1.txt')
+//    from('LICENSE').rename('(LICENSE)', '$1.txt')
 }
 
 processResources {

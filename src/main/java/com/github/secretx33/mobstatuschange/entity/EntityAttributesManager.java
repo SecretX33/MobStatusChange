@@ -1,7 +1,7 @@
 package com.github.secretx33.mobstatuschange.entity;
 
 import com.github.secretx33.mobstatuschange.config.Messages;
-import javafx.util.Pair;
+import com.github.secretx33.mobstatuschange.utils.Pair;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
@@ -33,6 +33,7 @@ public class EntityAttributesManager {
         this.plugin = plugin;
         this.logger = logger;
         reload();
+        logger.info("entityAttributesMap size is " + entityAttributesMap.size());
     }
 
     public void reload(){

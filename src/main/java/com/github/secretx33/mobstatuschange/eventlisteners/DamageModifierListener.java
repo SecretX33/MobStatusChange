@@ -14,9 +14,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.github.secretx33.mobstatuschange.events;
+package com.github.secretx33.mobstatuschange.eventlisteners;
 
 import com.github.secretx33.mobstatuschange.config.Config;
+import com.github.secretx33.mobstatuschange.config.ConfigKeys;
 import com.github.secretx33.mobstatuschange.entity.EntityAttributes;
 import com.github.secretx33.mobstatuschange.entity.EntityAttributesManager;
 import org.bukkit.Bukkit;
@@ -41,18 +42,17 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.logging.Logger;
 
-import static com.github.secretx33.mobstatuschange.config.Config.*;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.*;
 
 @ParametersAreNonnullByDefault
-public class DamageModifierEvents implements Listener {
+public class DamageModifierListener implements Listener {
 
     private final Logger logger;
     private final Config config;
     private final EntityAttributesManager attributesManager;
 
-    public DamageModifierEvents(final Plugin plugin, final Logger logger, final Config config, final EntityAttributesManager attributesManager) {
+    public DamageModifierListener(final Plugin plugin, final Logger logger, final Config config, final EntityAttributesManager attributesManager) {
         checkNotNull(plugin, "plugin cannot be null");
         checkNotNull(logger, "logger cannot be null");
         checkNotNull(config, "config cannot be null");
@@ -88,7 +88,7 @@ public class DamageModifierEvents implements Listener {
         modifyEventDamage(event, event.getDamager(), event.getEntity());
     }
 
-    private void modifyEventDamage(EntityDamageEvent event, Entity attacker, Entity defender){
+    private void modifyEventDamage(final EntityDamageEvent event, final Entity attacker, final Entity defender){
         // Defender is not a mob nor a player
         if(!(defender instanceof LivingEntity)) return;
 
@@ -96,14 +96,12 @@ public class DamageModifierEvents implements Listener {
         if(isEntityPlayerOrFromPlayer(attacker) && (boolean)config.get(ConfigKeys.PLAYER_DMG_MULTIPLIER_AFFECTS_MELEE_ONLY) && !isCauseMeleeDamage(event.getCause()))
             return;
 
-        if(defender instanceof Player) logger.fine("Player " + defender.getName() + " took damage of " + attacker.getName());
-
         final Double dmgMod = getDamageModifier(attacker);
         if(dmgMod == null || dmgMod == 1.0) return;
 
-        if(attacker instanceof Player || defender instanceof Player) logger.fine(String.format("Damage from %s on %s before change was %s.", attacker.getName(), defender.getName(), event.getDamage()));
+        if(attacker instanceof Player || defender instanceof Player) logger.fine(String.format("Damage from %s on %s before change was %.2f", attacker.getName(), defender.getName(), event.getDamage()));
         event.setDamage(event.getDamage() * dmgMod);
-        if(attacker instanceof Player || defender instanceof Player) logger.fine(String.format("Damage from %s on %s after change is %s.", attacker.getName(), defender.getName(), event.getDamage()));
+        if(attacker instanceof Player || defender instanceof Player) logger.fine(String.format("Damage from %s on %s after change is %.2f", attacker.getName(), defender.getName(), event.getDamage()));
     }
 
     private boolean isEntityPlayerOrFromPlayer(Entity e){

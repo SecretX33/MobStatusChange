@@ -20,6 +20,5 @@ import org.bukkit.ChatColor;
 
 public class Messages {
     public static final String SECTION_NOT_FOUND = "'%s' section could not be find in your YML config file, please fix the issue or delete the file.";
-    public static final String CONFIGS_RELOADED = ChatColor.LIGHT_PURPLE + "[MobStatusChange]" + ChatColor.GRAY + " configs reloaded and reapplied.";
-    public static final double MIN_HP_VALUE_TO_DIE_OF_POISON = 2.0;
+    public static final String CONFIGS_RELOADED = ChatColor.LIGHT_PURPLE + "[MobStatusChange]" + ChatColor.WHITE + " configs reloaded and reapplied.";
 }

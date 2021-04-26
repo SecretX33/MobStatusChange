@@ -14,12 +14,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.github.secretx33.mobstatuschange.events;
+package com.github.secretx33.mobstatuschange.eventlisteners;
 
 import com.github.secretx33.mobstatuschange.config.Config;
-import com.github.secretx33.mobstatuschange.config.Config.ConfigKeys;
-import com.github.secretx33.mobstatuschange.config.Messages;
+import com.github.secretx33.mobstatuschange.config.ConfigKeys;
 import com.github.secretx33.mobstatuschange.config.KilledByPoison;
+import com.github.secretx33.mobstatuschange.config.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -44,13 +44,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.round;
 
 @ParametersAreNonnullByDefault
-public class LethalPoisonEvents implements Listener {
+public class LethalPoisonListener implements Listener {
+
+    private static final double MIN_HP_VALUE_TO_DIE_OF_POISON = 2.0;
 
     private final Plugin plugin;
     private final Config config;
     private final Set<UUID> scheduledPoisonChecks = new HashSet<>();
 
-    public LethalPoisonEvents(Plugin plugin, final Config config) {
+    public LethalPoisonListener(final Plugin plugin, final Config config) {
         checkNotNull(plugin, "plugin cannot be null");
         checkNotNull(config, "config cannot be null");
         this.plugin = plugin;
@@ -64,13 +66,12 @@ public class LethalPoisonEvents implements Listener {
         if(event.getCause() != DamageCause.POISON || poisonKills == KilledByPoison.NONE) return;
 
         Entity entity = event.getEntity();
-        if(!(entity instanceof LivingEntity)) return;
+        if(!(entity instanceof LivingEntity) || poisonKills == KilledByPoison.PLAYERS && !(entity instanceof Player) || poisonKills == KilledByPoison.MONSTERS && !(entity instanceof Monster)) return;
 
-        if(poisonKills == KilledByPoison.ALL || poisonKills == KilledByPoison.PLAYERS && entity instanceof Player || poisonKills == KilledByPoison.MONSTERS && entity instanceof Monster) return;
         LivingEntity livingEntity = (LivingEntity)entity;
 
         // if the entity HP is higher than the threshold, return
-        if(livingEntity.getHealth() > Messages.MIN_HP_VALUE_TO_DIE_OF_POISON) return;
+        if(livingEntity.getHealth() > MIN_HP_VALUE_TO_DIE_OF_POISON) return;
         scheduleLethalPoisonTick(livingEntity);
     }
 
@@ -84,7 +85,7 @@ public class LethalPoisonEvents implements Listener {
         long poisonTickRate = getPoisonDelayBetweenTicks(poison);
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if(!isPoisoned(livingEntity) || !scheduledPoisonChecks.contains(livingEntity.getUniqueId()) || livingEntity.getHealth() > Messages.MIN_HP_VALUE_TO_DIE_OF_POISON) return;
+            if(!isPoisoned(livingEntity) || !scheduledPoisonChecks.contains(livingEntity.getUniqueId()) || livingEntity.getHealth() > (MIN_HP_VALUE_TO_DIE_OF_POISON + 0.5)) return;
             killByPoison(livingEntity);
             scheduledPoisonChecks.remove(livingEntity.getUniqueId());
         }, poisonTickRate);
@@ -92,21 +93,21 @@ public class LethalPoisonEvents implements Listener {
 
     @Nullable
     private PotionEffect getPoison(final LivingEntity livingEntity) {
-        return livingEntity.getActivePotionEffects().stream().filter(effect -> effect.getType() == PotionEffectType.POISON).findFirst().orElse(null);
+        return livingEntity.getActivePotionEffects().stream().filter(effect -> effect.getType().equals(PotionEffectType.POISON)).findFirst().orElse(null);
     }
 
     private boolean isPoisoned(final LivingEntity livingEntity) {
         return getPoison(livingEntity) != null;
     }
 
-    private int getPoisonDelayBetweenTicks(PotionEffect poison){
+    private int getPoisonDelayBetweenTicks(final PotionEffect poison){
         final int amp = poison.getAmplifier();
         double delay = 500; // delay in milliseconds
 
         if(amp == 0) delay = 1250;
         else if(amp <= 3) delay = 600;
 
-        return (int) round(delay / 20) + 1;
+        return (int) round(delay / 50) + 1;
     }
 
     // If player tries to logs off and he is on the scheduledPoisonChecks, he's low hp and probably logging off to avoid dying poisoned, so the plugin will kill him to prevent this exploit

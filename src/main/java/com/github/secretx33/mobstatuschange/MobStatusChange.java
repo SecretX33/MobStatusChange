@@ -19,10 +19,10 @@ package com.github.secretx33.mobstatuschange;
 import com.github.secretx33.mobstatuschange.commands.Commands;
 import com.github.secretx33.mobstatuschange.config.Config;
 import com.github.secretx33.mobstatuschange.entity.EntityAttributesManager;
-import com.github.secretx33.mobstatuschange.events.ApplyCustomAttribEvents;
-import com.github.secretx33.mobstatuschange.events.CreeperExplosionEvents;
-import com.github.secretx33.mobstatuschange.events.DamageModifierEvents;
-import com.github.secretx33.mobstatuschange.events.LethalPoisonEvents;
+import com.github.secretx33.mobstatuschange.eventlisteners.ApplyCustomAttribListener;
+import com.github.secretx33.mobstatuschange.eventlisteners.CreeperExplosionListener;
+import com.github.secretx33.mobstatuschange.eventlisteners.DamageModifierListener;
+import com.github.secretx33.mobstatuschange.eventlisteners.LethalPoisonListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MobStatusChange extends JavaPlugin {
@@ -32,11 +32,11 @@ public class MobStatusChange extends JavaPlugin {
         saveDefaultConfig();
         final Config config = new Config(this, getLogger());
         final EntityAttributesManager attributesManager = new EntityAttributesManager(this, getLogger());
-        new Commands(this, config);
-        new ApplyCustomAttribEvents(this, getLogger(), attributesManager);
-        new DamageModifierEvents(this, getLogger(), config, attributesManager);
-        new CreeperExplosionEvents(this, getLogger(), config, attributesManager);
-        new LethalPoisonEvents(this, config);
+        new ApplyCustomAttribListener(this, getLogger(), attributesManager);
+        new DamageModifierListener(this, getLogger(), config, attributesManager);
+        new CreeperExplosionListener(this, getLogger(), config, attributesManager);
+        new LethalPoisonListener(this, config);
+        new Commands(this, config, attributesManager);
         getLogger().info("loaded.");
     }
 

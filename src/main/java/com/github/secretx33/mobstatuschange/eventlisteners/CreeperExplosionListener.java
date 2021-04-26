@@ -14,12 +14,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.github.secretx33.mobstatuschange.events;
+package com.github.secretx33.mobstatuschange.eventlisteners;
 
 import com.github.secretx33.mobstatuschange.config.Config;
-import com.github.secretx33.mobstatuschange.config.Config.ConfigKeys;
-import com.github.secretx33.mobstatuschange.entity.EntityAttributes;
+import com.github.secretx33.mobstatuschange.config.ConfigKeys;
 import com.github.secretx33.mobstatuschange.config.ValidChannels;
+import com.github.secretx33.mobstatuschange.entity.EntityAttributes;
 import com.github.secretx33.mobstatuschange.entity.EntityAttributesManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -41,13 +41,13 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 @ParametersAreNonnullByDefault
-public class CreeperExplosionEvents implements Listener {
+public class CreeperExplosionListener implements Listener {
 
     private final Logger logger;
     private final Config config;
     private final EntityAttributesManager attributesManager;
 
-    public CreeperExplosionEvents(final Plugin plugin, final Logger logger, final Config config, final EntityAttributesManager attributesManager) {
+    public CreeperExplosionListener(final Plugin plugin, final Logger logger, final Config config, final EntityAttributesManager attributesManager) {
         checkNotNull(plugin, "plugin cannot be null");
         checkNotNull(logger, "logger cannot be null");
         checkNotNull(config, "config cannot be null");
