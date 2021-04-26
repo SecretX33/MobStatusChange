@@ -49,8 +49,8 @@ public class Config {
         final FileConfiguration config = plugin.getConfig();
 
         if(defaultValue.getClass().isEnum()) {
-            final String value = (config.getString(key) != null) ? config.getString(key) : "";
             return (T) cache.computeIfAbsent(key, k -> {
+                final String value = (config.getString(key) != null) ? config.getString(key) : "";
                 try {
                     return Enum.valueOf(((Enum<?>) defaultValue).getClass(), value.toUpperCase(Locale.US));
                 } catch(IllegalArgumentException e) {
