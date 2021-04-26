@@ -19,7 +19,6 @@ package com.github.secretx33.mobstatuschange.eventlisteners;
 import com.github.secretx33.mobstatuschange.config.Config;
 import com.github.secretx33.mobstatuschange.config.ConfigKeys;
 import com.github.secretx33.mobstatuschange.config.KilledByPoison;
-import com.github.secretx33.mobstatuschange.config.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;

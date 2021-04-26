@@ -23,8 +23,10 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -47,7 +49,12 @@ public class ApplyCustomAttribListener implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    private void onPlayerJoin(PlayerJoinEvent event){
+        attributesManager.setAttributesFor(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onEntitySpawn(CreatureSpawnEvent event){
         printEntityStats(event, "Base");
         attributesManager.setAttributesFor(event.getEntity());

@@ -18,7 +18,7 @@ package com.github.secretx33.mobstatuschange.eventlisteners;
 
 import com.github.secretx33.mobstatuschange.config.Config;
 import com.github.secretx33.mobstatuschange.config.ConfigKeys;
-import com.github.secretx33.mobstatuschange.config.ValidChannels;
+import com.github.secretx33.mobstatuschange.config.ValidChannel;
 import com.github.secretx33.mobstatuschange.entity.EntityAttributes;
 import com.github.secretx33.mobstatuschange.entity.EntityAttributesManager;
 import org.bukkit.Bukkit;
@@ -30,6 +30,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
@@ -59,6 +60,13 @@ public class CreeperExplosionListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
+    private void onShieldDamage(PlayerItemDamageEvent event) {
+        if(event.getItem().getType() != Material.SHIELD || !(boolean)config.get(ConfigKeys.CREEPER_EXPLOSION_INSTA_BREAK_SHIELDS)) return;
+        // Cancel the event to mitigate the damage on the shield, assuming the player got more than 1 shield on the stack, because we are already removing 1 of his shields
+        event.setCancelled(true);
+    }
+
+    @EventHandler(ignoreCancelled = true)
     private void onShieldBlockCreeperExplosion(EntityDamageByEntityEvent event){
         Entity attacker = event.getDamager();
         Entity defender = event.getEntity();
@@ -82,9 +90,9 @@ public class CreeperExplosionListener implements Listener {
             ItemStack offHand = p.getInventory().getItemInOffHand();
 
             if(mainHand.getType() == Material.matchMaterial("shield")){
-                p.getInventory().setItemInMainHand(null);
+                mainHand.setAmount(mainHand.getAmount() - 1);
             } else if(offHand.getType() == Material.matchMaterial("shield")){
-                p.getInventory().setItemInOffHand(null);
+                offHand.setAmount(offHand.getAmount() - 1);
             }
             p.updateInventory();
             p.playSound(p.getLocation(), Sound.ITEM_SHIELD_BREAK, 1, 1);
@@ -98,16 +106,18 @@ public class CreeperExplosionListener implements Listener {
         }
 
         //Send player a message after shield blocking creeper explosion
-        String message = config.get(ConfigKeys.SHIELDBLOCK_MESSAGE_TEXT);
-        if(message.isEmpty()) return;
+        final String message = config.get(ConfigKeys.SHIELDBLOCK_MESSAGE_TEXT);
+        final String subtitle = config.get(ConfigKeys.SHIELDBLOCK_MESSAGE_SUBTITLE);
+        final ValidChannel channel = config.get(ConfigKeys.SHIELDBLOCK_MESSAGE_CHANNEl);
+        if(channel == ValidChannel.CHAT && message.isEmpty() || channel == ValidChannel.TITLE && message.isEmpty() && subtitle.isEmpty()) return;
 
-        if(config.get(ConfigKeys.SHIELDBLOCK_MESSAGE_CHANNEl) == ValidChannels.CHAT){
+        if(channel == ValidChannel.CHAT){
             p.sendMessage(message);
         } else {
             final int fadeIn   = (int)((double)config.get(ConfigKeys.SHIELDBLOCK_TITLE_FADE_IN)   * 20.0);
             final int stayTime = (int)((double)config.get(ConfigKeys.SHIELDBLOCK_TITLE_STAY_TIME) * 20.0);
             final int fadeOut  = (int)((double)config.get(ConfigKeys.SHIELDBLOCK_TITLE_FADE_OUT)  * 20.0);
-            p.sendTitle("", message, fadeIn, stayTime, fadeOut);
+            p.sendTitle(message, subtitle, fadeIn, stayTime, fadeOut);
         }
     }
 }

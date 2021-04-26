@@ -80,8 +80,8 @@
 ############################################################
 
 general:
-  # If set to any value other than none, it will check for poison in those entities and kill them if they would die from poison; valid values: all, players, monsters, none
-  entities-killed-by-poison: all
+  # If set to any value other than none, it will check for poison in those entities and kill them if they would die from poison; valid values: ALL, PLAYERS, MONSTERS, NONE
+  entities-killed-by-poison: ALL
   # Useful in situations like, for example, if you want to remove the attack delay (by multiplying the attack speed of players by like, 100), and decrease melee damage to compensate (because players will always have the sweep attack), but don't want to alter ranged or potion damage of players.
   atk-damage-of-player-affects-only-melee: false
 
@@ -91,13 +91,13 @@ general:
   creeper-explosion-shield-damage-bypass: 0.0
   # Optionally, send the player a message after taking damage from a creeper and blocking it with a shield
   message-player-after-shieldblocking-creeper-explosion:
+    channel: CHAT  # valid parameters: CHAT, TITLE
     # Leave it empty if you don't want to send any message; color sign is &
-    text: ""
-    channel: chat  # valid parameters: chat, title
-    # below parameters are valid only if channel is set to title
-    fade-in: 1.0     # in seconds
-    stay-time: 3.0   # in seconds
-    fade-out: 1.0    # in seconds
+    text: ""         # if channel is set to 'title', this is the title
+    subtitle: ""     # ignored if channel is set to 'chat'
+    fade-in: 1.0     # in seconds, ignored if channel is set to 'chat'
+    stay-time: 3.0   # in seconds, ignored if channel is set to 'chat'
+    fade-out: 1.0    # in seconds, ignored if channel is set to 'chat'
 
 ############################################################
 # +------------------------------------------------------+ #

@@ -16,6 +16,7 @@ along with MobStatusChange.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.github.secretx33.mobstatuschange.config;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -61,12 +62,14 @@ public class Config {
 
         return (T) cache.computeIfAbsent(key, k -> {
             Object configEntry = plugin.getConfig().get(key);
-            if(configEntry != null && !(defaultValue.getClass().isAssignableFrom(configEntry.getClass()))) {
+            // If entry is not present, silent fail to default value
+            if(configEntry == null) return defaultValue;
+            // If the entry is present but the value type is not the expected one, warn in the console
+            if(!defaultValue.getClass().isAssignableFrom(configEntry.getClass())) {
                 logger.severe("Error while trying to get config key '" + key + "', it was supposed to be a " + defaultValue.getClass().getSimpleName() + " but instead it was a " + configEntry.getClass().getSimpleName() + ", please fix this entry in the config.yml and reload the configs, defaulting to " + defaultValue);
                 return defaultValue;
             }
-            if(configEntry == null) return defaultValue;
-            return configEntry;
+            return (defaultValue.getClass() == String.class) ? color((String)configEntry) : configEntry;
         });
     }
 
@@ -76,10 +79,13 @@ public class Config {
         return get(key.configEntry, (T) key.defaultValue);
     }
 
+    public String color(String string) {
+        return ChatColor.translateAlternateColorCodes('&', string);
+    }
+
     public void reload() {
         cache.clear();
         plugin.saveDefaultConfig();
         plugin.reloadConfig();
     }
-
 }
