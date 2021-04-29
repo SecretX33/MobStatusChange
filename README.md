@@ -27,13 +27,9 @@ Or if you want to download an earlier version of the plugin, you can do it by ch
 
 /msc reload - reload your plugin
 
-/msc debug - enable or disable debug mode (for developers only)
-
 ### Permissions
 
 msc.reload - permission to use /msc reload
-
-msc.debug - permission to use /msc debug
 
 ### Reporting issues
 
